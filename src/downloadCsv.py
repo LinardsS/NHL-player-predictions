@@ -9,7 +9,7 @@ import os
 import utils
 from envVariables import getDataDirectory
 
-def downloadPlayerStats(today, date, file_date):
+def downloadPlayerSeasonStats(today, date, file_date):
     dataDirectory = getDataDirectory()
     directory = dataDirectory
     chromeOptions = Options()
@@ -38,7 +38,7 @@ def downloadPlayerStats(today, date, file_date):
     new_file = os.path.join(directory, file_datestamp + " - Player Season Totals" + ".csv")
     os.rename(old_file, new_file)
 
-# downloadPlayerStats(today = False, date = "2022-10-07", file_date="07-10-22")
+# downloadPlayerSeasonStats(today = False, date = "2022-10-07", file_date="07-10-22")
 def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
@@ -46,7 +46,7 @@ def downloadSeasonPlayerStats():
     start_date = date(2021, 10, 12)
     end_date = date(2022, 4, 29)
     for single_date in daterange(start_date, end_date):
-        downloadPlayerStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%d-%m-%y"))
+        downloadPlayerSeasonStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%d-%m-%y"))
         print(single_date.strftime("%Y-%m-%d") + " processed")
 #downloadSeasonPlayerStats()
-downloadPlayerStats(today = True, date = None, file_date = None)
+downloadPlayerSeasonStats(today = True, date = None, file_date = None)

@@ -1,4 +1,4 @@
-from downloadCsv import downloadPlayerStats
+from downloadCsv import downloadPlayerSeasonStats
 #from uploadResults import uploadResultsAndStats
 from utils import getTodaysDate, getTomorrowsDate
 #from predictions import predictSlate, scorePredictions
@@ -10,7 +10,7 @@ todays_date = todays_date + '.txt'
 filepath = path.abspath(path.join(basepath, "..", "data/daily logs", todays_date))
 sys.stdout = open(filepath, 'w')
 
-downloadPlayerStats(today = True, date = None, file_date = None) # downloads team stats file
+downloadPlayerSeasonStats(today = True, date = None, file_date = None) # downloads team stats file
 #uploadResultsAndStats()
 
 
