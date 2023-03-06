@@ -1,6 +1,6 @@
 import requests
 import sqlite3
-from utils import establishDatabaseConnection, setAverageIfNull, getTeamStatsAverages
+from utils import establishDatabaseConnection, setAverageIfNull, getTeamStatsAverages, getTodaysDate
 from os import path
 import pandas as pd
 import numpy as np
@@ -254,9 +254,306 @@ def uploadNHLGameDataToDatabaseFromFile(db_name):
     
     conn.commit()
     
+def uploadNHLPlayerGameDataToDatabase(db_name, date = None):
+    if date is None:
+        getTodaysDate(format = "%Y-%m-%d")
+    # Retrieve all IDs for games that have happened so far
+    conn = establishDatabaseConnection(db_name)
+    c = conn.cursor()
+    c.execute("SELECT id, date FROM games where date < (?)", (date,))
+    game_list = c.fetchall()
+    
+    for game in game_list:
+        url = "https://statsapi.web.nhl.com/api/v1/game/{}/boxscore".format(game[0])
+        print("URL: " + url)
+        request = requests.get(url)
+        requestJson = request.json()
+        home_team = requestJson['teams']['home']['team']['name']
+        away_team = requestJson['teams']['away']['team']['name']
+        home_team_id = requestJson['teams']['home']['team']['id']
+        away_team_id = requestJson['teams']['away']['team']['id']
+        # Get list of players that played in the match, then loop through their stats
+        
+        home_team_goalies = requestJson['teams']['home']['goalies']
+        for h_goalie_id in home_team_goalies:
+            h_goalie = requestJson['teams']['home']['players']['ID' + str(h_goalie_id)]
+            h_goalie_name = h_goalie['person']['fullName']
 
+            h_goalie_stats = h_goalie['stats']['goalieStats']
+            h_goalie_toi = h_goalie_stats['timeOnIce']
+            h_goalie_goals = h_goalie_stats['goals']     # :)
+            h_goalie_assists = h_goalie_stats['assists'] # :)
+            h_goalie_pim = h_goalie_stats['pim']
+            h_goalie_shots = h_goalie_stats['shots']
+            h_goalie_saves = h_goalie_stats['saves']
+            h_goalie_pp_saves = h_goalie_stats['powerPlaySaves']
+            h_goalie_sh_saves = h_goalie_stats['shortHandedSaves']
+            h_goalie_even_saves = h_goalie_stats['evenSaves']
+            h_goalie_pp_sa = h_goalie_stats['powerPlayShotsAgainst']
+            h_goalie_sh_sa = h_goalie_stats['shortHandedShotsAgainst']
+            h_goalie_even_sa = h_goalie_stats['evenShotsAgainst']
+            h_goalie_decision = h_goalie_stats['decision']
+            h_goalie_save_pct = h_goalie_stats['savePercentage']
+            h_goalie_pp_save_pct = h_goalie_stats['powerPlaySavePercentage']
+            if "shortHandedSavePercentage" in h_goalie_stats:
+                h_goalie_sh_save_pct = h_goalie_stats['shortHandedSavePercentage']
+            else:
+                h_goalie_sh_save_pct = None
+            h_goalie_even_save_pct = h_goalie_stats['evenStrengthSavePercentage']
+
+            h_goalie_tuple = (h_goalie_id, h_goalie_name, game[0], game[1], # game[0] - game_id, game[1] - date
+                              home_team, away_team, away_team_id, h_goalie_toi, h_goalie_goals, h_goalie_assists,
+                              h_goalie_pim,h_goalie_shots, h_goalie_saves, h_goalie_save_pct, h_goalie_pp_saves,
+                              h_goalie_pp_sa, h_goalie_even_saves, h_goalie_even_sa,h_goalie_sh_saves, h_goalie_sh_sa,
+                              h_goalie_even_save_pct, h_goalie_pp_save_pct,h_goalie_sh_save_pct, h_goalie_decision)
+            query = """INSERT INTO goalie_game_data(
+            player_id,
+            player_name,
+            game_id,
+            date,
+            home_team,
+            away_team,
+            opponent_team_id,
+            time_on_ice,
+            goals,
+            assists,
+            penalty_minutes,
+            shots_faced,
+            saves,
+            save_pct,
+            power_play_saves,
+            power_play_shots_faced,
+            even_saves,
+            even_shots_faced,
+            short_handed_saves,
+            short_handed_shots_faced,
+            even_sv_pct,
+            pp_sv_pct,
+            sh_sv_pct,
+            decision
+            )
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            c.execute(query, h_goalie_tuple)
+
+
+        away_team_goalies = requestJson['teams']['away']['goalies']
+        for a_goalie_id in away_team_goalies:
+            a_goalie = requestJson['teams']['away']['players']['ID' + str(a_goalie_id)]
+            a_goalie_name = a_goalie['person']['fullName']
+
+            a_goalie_stats = a_goalie['stats']['goalieStats']
+            a_goalie_toi = a_goalie_stats['timeOnIce']
+            a_goalie_goals = a_goalie_stats['goals']     # :)
+            a_goalie_assists = a_goalie_stats['assists'] # :)
+            a_goalie_pim = a_goalie_stats['pim']
+            a_goalie_shots = a_goalie_stats['shots']
+            a_goalie_saves = a_goalie_stats['saves']
+            a_goalie_pp_saves = a_goalie_stats['powerPlaySaves']
+            a_goalie_sh_saves = a_goalie_stats['shortHandedSaves']
+            a_goalie_even_saves = a_goalie_stats['evenSaves']
+            a_goalie_pp_sa = a_goalie_stats['powerPlayShotsAgainst']
+            a_goalie_sh_sa = a_goalie_stats['shortHandedShotsAgainst']
+            a_goalie_even_sa = a_goalie_stats['evenShotsAgainst']
+            a_goalie_decision = a_goalie_stats['decision']
+            a_goalie_save_pct = a_goalie_stats['savePercentage']
+            a_goalie_pp_save_pct = a_goalie_stats['powerPlaySavePercentage']
+            if "shortHandedSavePercentage" in a_goalie_stats:
+                a_goalie_sh_save_pct = a_goalie_stats['shortHandedSavePercentage']
+            else:
+                a_goalie_sh_save_pct = None
+            a_goalie_even_save_pct = a_goalie_stats['evenStrengthSavePercentage']
+
+            a_goalie_tuple = (a_goalie_id, a_goalie_name, game[0], game[1], # game[0] - game_id, game[1] - date
+                              home_team, away_team, home_team_id, a_goalie_toi, a_goalie_goals, a_goalie_assists,
+                              a_goalie_pim,a_goalie_shots, a_goalie_saves, a_goalie_save_pct, a_goalie_pp_saves,
+                              a_goalie_pp_sa, a_goalie_even_saves, a_goalie_even_sa,a_goalie_sh_saves, a_goalie_sh_sa,
+                              a_goalie_even_save_pct, a_goalie_pp_save_pct,a_goalie_sh_save_pct, a_goalie_decision)
+            query = """INSERT INTO goalie_game_data(
+            player_id,
+            player_name,
+            game_id,
+            date,
+            home_team,
+            away_team,
+            opponent_team_id,
+            time_on_ice,
+            goals,
+            assists,
+            penalty_minutes,
+            shots_faced,
+            saves,
+            save_pct,
+            power_play_saves,
+            power_play_shots_faced,
+            even_saves,
+            even_shots_faced,
+            short_handed_saves,
+            short_handed_shots_faced,
+            even_sv_pct,
+            pp_sv_pct,
+            sh_sv_pct,
+            decision
+            )
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            c.execute(query, a_goalie_tuple)
+
+        
+        home_team_skaters = requestJson['teams']['home']['skaters']
+        home_team_scratches = requestJson['teams']['away']['scratches'] # Players that didn't play
+        home_team_skaters = [i for i in home_team_skaters if i not in home_team_scratches]
+        for h_skater_id in home_team_skaters:
+            h_skater = requestJson['teams']['home']['players']['ID' + str(h_skater_id)]
+            h_skater_name = h_skater['person']['fullName']
+
+            h_skater_stats = h_skater['stats']
+            if 'skaterStats' in h_skater_stats:
+                h_skater_stats = h_skater_stats['skaterStats']
+            else:
+                continue
+            h_skater_toi = h_skater_stats['timeOnIce']
+            h_skater_goals = h_skater_stats['goals']
+            h_skater_assists = h_skater_stats['assists']
+            h_skater_pim = h_skater_stats['penaltyMinutes']
+            h_skater_shots = h_skater_stats['shots']
+            h_skater_hits = h_skater_stats['hits']
+            h_skater_pp_goals = h_skater_stats['powerPlayGoals']
+            h_skater_pp_assists = h_skater_stats['powerPlayAssists']
+            h_skater_sh_goals = h_skater_stats['shortHandedGoals']
+            h_skater_sh_assists = h_skater_stats['shortHandedAssists']
+            if "faceOffPct" in h_skater_stats:
+                h_skater_faceoff_pct = h_skater_stats['faceOffPct']
+            else:
+                h_skater_faceoff_pct = None
+            h_skater_faceoff_wins = h_skater_stats['faceOffWins']
+            h_skater_faceoffs_taken = h_skater_stats['faceoffTaken'] # mind the lowercase 'o'
+            h_skater_takeaways = h_skater_stats['takeaways']
+            h_skater_giveaways = h_skater_stats['giveaways']
+            h_skater_blocked_shots = h_skater_stats['blocked']
+            h_skater_plus_minus = h_skater_stats['plusMinus']
+            h_skater_ev_toi = h_skater_stats['evenTimeOnIce']
+            h_skater_pp_toi = h_skater_stats['powerPlayTimeOnIce']
+            h_skater_sh_toi = h_skater_stats['shortHandedTimeOnIce']
+
+            h_skater_tuple = (h_skater_id, h_skater_name, game[0], game[1], home_team, away_team,
+                              away_team_id, h_skater_toi, h_skater_goals,h_skater_assists,h_skater_shots,
+                              h_skater_hits,h_skater_pp_goals,h_skater_pp_assists, h_skater_pim, 
+                              h_skater_faceoff_pct,h_skater_faceoff_wins,h_skater_faceoffs_taken, 
+                              h_skater_takeaways, h_skater_giveaways, h_skater_sh_goals, h_skater_sh_assists,
+                              h_skater_blocked_shots, h_skater_plus_minus, h_skater_ev_toi,
+                              h_skater_pp_toi, h_skater_sh_toi)
+            query = """INSERT INTO skater_game_data(
+            player_id,
+            player_name,
+            game_id,
+            date,
+            home_team,
+            away_team,
+            opponent_team_id,
+            time_on_ice,
+            goals,
+            assists,
+            shots,
+            hits,
+            power_play_goals,
+            power_play_assists,
+            penalty_minutes,
+            face_off_pct,
+            face_off_wins,
+            face_offs_taken,
+            takeaways,
+            giveaways,
+            short_handed_goals,
+            short_handed_assists,
+            blocked_shots,
+            plus_minus,
+            even_toi,
+            pp_toi,
+            sh_toi
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            c.execute(query, h_skater_tuple)
+
+        away_team_skaters = requestJson['teams']['away']['skaters']
+        away_team_scratches = requestJson['teams']['away']['scratches'] # Players that didn't play
+        away_team_skaters = [i for i in away_team_skaters if i not in away_team_scratches]
+        for a_skater_id in away_team_skaters:
+            a_skater = requestJson['teams']['away']['players']['ID' + str(a_skater_id)]
+            a_skater_name = a_skater['person']['fullName']
+
+            a_skater_stats = a_skater['stats']
+            if 'skaterStats' in a_skater_stats:
+                a_skater_stats = a_skater_stats['skaterStats']
+            else:
+                continue
+            a_skater_toi = a_skater_stats['timeOnIce']
+            a_skater_goals = a_skater_stats['goals']
+            a_skater_assists = a_skater_stats['assists']
+            a_skater_pim = a_skater_stats['penaltyMinutes']
+            a_skater_shots = a_skater_stats['shots']
+            a_skater_hits = a_skater_stats['hits']
+            a_skater_pp_goals = a_skater_stats['powerPlayGoals']
+            a_skater_pp_assists = a_skater_stats['powerPlayAssists']
+            a_skater_sh_goals = a_skater_stats['shortHandedGoals']
+            a_skater_sh_assists = a_skater_stats['shortHandedAssists']
+            if "faceOffPct" in a_skater_stats:
+                a_skater_faceoff_pct = a_skater_stats['faceOffPct']
+            else:
+                a_skater_faceoff_pct = None
+            a_skater_faceoff_wins = a_skater_stats['faceOffWins']
+            a_skater_faceoffs_taken = a_skater_stats['faceoffTaken'] # mind the lowercase 'o'
+            a_skater_takeaways = a_skater_stats['takeaways']
+            a_skater_giveaways = a_skater_stats['giveaways']
+            a_skater_blocked_shots = a_skater_stats['blocked']
+            a_skater_plus_minus = a_skater_stats['plusMinus']
+            a_skater_ev_toi = a_skater_stats['evenTimeOnIce']
+            a_skater_pp_toi = a_skater_stats['powerPlayTimeOnIce']
+            a_skater_sh_toi = a_skater_stats['shortHandedTimeOnIce']
+
+            a_skater_tuple = (a_skater_id, a_skater_name, game[0], game[1], home_team, away_team,
+                              home_team_id, a_skater_toi, a_skater_goals,a_skater_assists,a_skater_shots,
+                              a_skater_hits,a_skater_pp_goals,a_skater_pp_assists, a_skater_pim, 
+                              a_skater_faceoff_pct,a_skater_faceoff_wins,a_skater_faceoffs_taken, 
+                              a_skater_takeaways, a_skater_giveaways, a_skater_sh_goals, a_skater_sh_assists,
+                              a_skater_blocked_shots, a_skater_plus_minus, a_skater_ev_toi,
+                              a_skater_pp_toi, a_skater_sh_toi)
+            query = """INSERT INTO skater_game_data(
+            player_id,
+            player_name,
+            game_id,
+            date,
+            home_team,
+            away_team,
+            opponent_team_id,
+            time_on_ice,
+            goals,
+            assists,
+            shots,
+            hits,
+            power_play_goals,
+            power_play_assists,
+            penalty_minutes,
+            face_off_pct,
+            face_off_wins,
+            face_offs_taken,
+            takeaways,
+            giveaways,
+            short_handed_goals,
+            short_handed_assists,
+            blocked_shots,
+            plus_minus,
+            even_toi,
+            pp_toi,
+            sh_toi
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            c.execute(query, a_skater_tuple)
+    
+    #Write changes
+    conn.commit()
+    conn.close()
         
 
 #uploadNHLTeamsToDatabase("main.db")
 #uploadNHLPlayersToDatabase("main.db")
-uploadNHLGameDataToDatabaseFromFile("main.db")
+#uploadNHLGameDataToDatabaseFromFile("main.db")
+uploadNHLPlayerGameDataToDatabase("main.db", "2022-10-08")

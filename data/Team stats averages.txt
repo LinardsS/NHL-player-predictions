@@ -48,4 +48,3 @@
 
 
 print(df[['h_point%','h_cf%','h_ff%','h_sf%','h_gf%','h_xgf%','h_scf%','h_scsf%','h_scgf%','h_scsh%','h_scsv%','h_hdsf%','h_hdgf%','h_hdsh%','h_hdsv%','h_mdsf%','h_mdgf%','h_mdsh%','h_mdsv%','h_ldsf%','h_ldgf%','h_ldsh%','h_ldsv%','h_sh%','h_sv%','h_PDO','a_point%', 'a_cf%','a_ff%','a_sf%','a_gf%','a_xgf%','a_scf%','a_scsf%','a_scgf%','a_scsh%','a_scsv%','a_hdsf%','a_hdgf%','a_hdsh%','a_hdsv%','a_mdsf%','a_mdgf%','a_mdsh%','a_mdsv%','a_ldsf%','a_ldgf%','a_ldsh%','a_ldsv%','a_sh%','a_sv%','a_PDO']].mean())
-' : ' :   

@@ -82,5 +82,61 @@ c = conn.cursor()
 #             a_PDO real
 #             )""")
 
+# c.execute("""CREATE TABLE skater_game_data(
+#             player_id integer,
+#             player_name text,
+#             game_id integer,
+#             date text,
+#             home_team name,
+#             away_team name,
+#             opponent_team_id integer,
+#             time_on_ice real,
+#             goals integer,
+#             assists integer,
+#             shots integer,
+#             hits integer,
+#             power_play_goals integer,
+#             power_play_assists integer,
+#             penalty_minutes integer,
+#             face_off_pct real,
+#             face_off_wins integer,
+#             face_offs_taken integer,
+#             takeaways integer,
+#             giveaways integer,
+#             short_handed_goals integer,
+#             short_handed_assists integer,
+#             blocked_shots integer,
+#             plus_minus integer,
+#             even_toi real,
+#             pp_toi real,
+#             sh_toi real
+#             )""")
+# c.execute("""CREATE TABLE goalie_game_data(
+#             player_id integer,
+#             player_name text,
+#             game_id integer,
+#             date text,
+#             home_team name,
+#             away_team name,
+#             opponent_team_id integer,
+#             time_on_ice real,
+#             goals integer,
+#             assists integer,
+#             penalty_minutes integer,
+#             shots_faced integer,
+#             saves integer,
+#             save_pct real,
+#             power_play_saves integer,
+#             power_play_shots_faced integer,
+#             even_saves integer,
+#             even_shots_faced integer,
+#             short_handed_saves integer,
+#             short_handed_shots_faced integer,
+#             even_sv_pct real,
+#             pp_sv_pct real,
+#             sh_sv_pct real,
+#             decision text
+#             )""")
+
 conn.commit()
 conn.close()
