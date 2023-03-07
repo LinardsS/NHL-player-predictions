@@ -1,6 +1,6 @@
 import requests
 import sqlite3
-from utils import establishDatabaseConnection, setAverageIfNull, getTeamStatsAverages, getTodaysDate
+from utils import establishDatabaseConnection, setAverageIfNull, getTeamStatsAverages, getTodaysDate, getYesterdaysDate
 from os import path
 import pandas as pd
 import numpy as np
@@ -254,13 +254,16 @@ def uploadNHLGameDataToDatabaseFromFile(db_name):
     
     conn.commit()
     
-def uploadNHLPlayerGameDataToDatabase(db_name, date = None):
-    if date is None:
-        getTodaysDate(format = "%Y-%m-%d")
+def uploadNHLPlayerGameDataToDatabase(db_name, from_date = None, to_date = None):    
     # Retrieve all IDs for games that have happened so far
     conn = establishDatabaseConnection(db_name)
     c = conn.cursor()
-    c.execute("SELECT id, date FROM games where date < (?)", (date,))
+    if from_date is None:
+        from_date= getYesterdaysDate(format = "%Y-%m-%d")
+    if to_date is None:
+        to_date= getTodaysDate(format = "%Y-%m-%d")
+
+    c.execute("SELECT id, date FROM games where date >= (?) and date < (?) ", (from_date,to_date))
     game_list = c.fetchall()
     
     for game in game_list:
@@ -293,13 +296,22 @@ def uploadNHLPlayerGameDataToDatabase(db_name, date = None):
             h_goalie_sh_sa = h_goalie_stats['shortHandedShotsAgainst']
             h_goalie_even_sa = h_goalie_stats['evenShotsAgainst']
             h_goalie_decision = h_goalie_stats['decision']
-            h_goalie_save_pct = h_goalie_stats['savePercentage']
-            h_goalie_pp_save_pct = h_goalie_stats['powerPlaySavePercentage']
+            if "savePercentage" in h_goalie_stats:
+                h_goalie_save_pct = h_goalie_stats['savePercentage']
+            else:
+                h_goalie_save_pct = None
+            if "powerPlaySavePercentage" in h_goalie_stats:
+                h_goalie_pp_save_pct = h_goalie_stats['powerPlaySavePercentage']
+            else:
+                h_goalie_pp_save_pct = None
             if "shortHandedSavePercentage" in h_goalie_stats:
                 h_goalie_sh_save_pct = h_goalie_stats['shortHandedSavePercentage']
             else:
                 h_goalie_sh_save_pct = None
-            h_goalie_even_save_pct = h_goalie_stats['evenStrengthSavePercentage']
+            if "evenStrengthSavePercentage" in h_goalie_stats:
+                h_goalie_even_save_pct = h_goalie_stats['evenStrengthSavePercentage']
+            else:
+                h_goalie_even_save_pct = None
 
             h_goalie_tuple = (h_goalie_id, h_goalie_name, game[0], game[1], # game[0] - game_id, game[1] - date
                               home_team, away_team, away_team_id, h_goalie_toi, h_goalie_goals, h_goalie_assists,
@@ -355,13 +367,22 @@ def uploadNHLPlayerGameDataToDatabase(db_name, date = None):
             a_goalie_sh_sa = a_goalie_stats['shortHandedShotsAgainst']
             a_goalie_even_sa = a_goalie_stats['evenShotsAgainst']
             a_goalie_decision = a_goalie_stats['decision']
-            a_goalie_save_pct = a_goalie_stats['savePercentage']
-            a_goalie_pp_save_pct = a_goalie_stats['powerPlaySavePercentage']
+            if "savePercentage" in a_goalie_stats:
+                a_goalie_save_pct = a_goalie_stats['savePercentage']
+            else:
+                a_goalie_save_pct = None
+            if "powerPlaySavePercentage" in a_goalie_stats:
+                a_goalie_pp_save_pct = a_goalie_stats['powerPlaySavePercentage']
+            else:
+                a_goalie_pp_save_pct = None
             if "shortHandedSavePercentage" in a_goalie_stats:
                 a_goalie_sh_save_pct = a_goalie_stats['shortHandedSavePercentage']
             else:
                 a_goalie_sh_save_pct = None
-            a_goalie_even_save_pct = a_goalie_stats['evenStrengthSavePercentage']
+            if "evenStrengthSavePercentage" in a_goalie_stats:
+                a_goalie_even_save_pct = a_goalie_stats['evenStrengthSavePercentage']
+            else:
+                a_goalie_even_save_pct = None
 
             a_goalie_tuple = (a_goalie_id, a_goalie_name, game[0], game[1], # game[0] - game_id, game[1] - date
                               home_team, away_team, home_team_id, a_goalie_toi, a_goalie_goals, a_goalie_assists,
@@ -556,4 +577,4 @@ def uploadNHLPlayerGameDataToDatabase(db_name, date = None):
 #uploadNHLTeamsToDatabase("main.db")
 #uploadNHLPlayersToDatabase("main.db")
 #uploadNHLGameDataToDatabaseFromFile("main.db")
-uploadNHLPlayerGameDataToDatabase("main.db", "2022-10-08")
+#######uploadNHLPlayerGameDataToDatabase("main.db", "2022-10-07", "2023-03-08")

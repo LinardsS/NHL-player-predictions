@@ -90,3 +90,10 @@ def getTeamStatsAverages():
     }
 
     return dict
+
+def convertTimeStringToMinutes(time_string):
+    if ':' in time_string:
+        m, s = time_string.split(':')
+        return int(m) + int(s)/60
+    else:
+        return time_string
