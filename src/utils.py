@@ -97,3 +97,15 @@ def convertTimeStringToMinutes(time_string):
         return int(m) + int(s)/60
     else:
         return time_string
+    
+def handleSpecialCharactersInTeamNames(home_team, away_team):
+    if home_team == "Montréal Canadiens":
+        home_team = "Montreal Canadiens"
+    if away_team == "Montréal Canadiens":
+        away_team = "Montreal Canadiens"
+    if home_team == "St. Louis Blues":
+        home_team = "St Louis Blues"
+    if away_team == "St. Louis Blues":
+        away_team = "St Louis Blues"
+
+    return home_team, away_team
