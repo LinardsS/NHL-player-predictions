@@ -5,7 +5,7 @@ import importCsv
 import sqlite3
 
 
-def uploadResultsAndStats(start_date = None, end_date = None):
+def uploadGameResultsAndTeamStats(start_date = None, end_date = None):
     if start_date is None:
         start_date = utils.getYesterdaysDate("%Y-%m-%d")
     if end_date is None:

@@ -1,5 +1,6 @@
 from downloadCsv import downloadPlayerSeasonStats, downloadTeamStats
-from upload import uploadResultsAndStats
+from upload import uploadGameResultsAndTeamStats
+from getNHLData import uploadNHLPlayerGameDataToDatabase
 from utils import getTodaysDate, getTomorrowsDate
 #from predictions import predictSlate, scorePredictions
 import sys
@@ -12,7 +13,8 @@ sys.stdout = open(filepath, 'w')
 
 downloadPlayerSeasonStats(today = True, date = None, file_date = None) # downloads player season stats file
 downloadTeamStats(today = True, date = None, file_date = None)
-uploadResultsAndStats()
+uploadGameResultsAndTeamStats()
+uploadNHLPlayerGameDataToDatabase("main.db")
 
 
 sys.stdout.close()
