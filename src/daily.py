@@ -6,7 +6,7 @@ from utils import getTodaysDate, getTomorrowsDate
 import sys
 from os import path
 basepath = path.dirname(__file__)
-todays_date = getTodaysDate()
+todays_date = getTodaysDate("%Y-%m-%d %H-%M-%S")
 todays_date = todays_date + '.txt'
 filepath = path.abspath(path.join(basepath, "..", "data/daily logs", todays_date))
 sys.stdout = open(filepath, 'w')

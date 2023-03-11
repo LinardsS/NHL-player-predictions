@@ -5,7 +5,7 @@ import sqlite3
 from os import path
 
 def getTodaysDate(format = "%Y-%m-%d",backdate = None):
-    today = date.today()
+    today = datetime.now()
     if backdate is True:
         today = today - timedelta(days=1)
     return today.strftime(format)

@@ -265,6 +265,7 @@ def uploadNHLPlayerGameDataToDatabase(db_name, from_date = None, to_date = None)
 
     c.execute("SELECT id, date FROM games where date >= (?) and date < (?) ", (from_date,to_date))
     game_list = c.fetchall()
+    print(game_list)
     
     for game in game_list:
         url = "https://statsapi.web.nhl.com/api/v1/game/{}/boxscore".format(game[0])
