@@ -21,7 +21,7 @@ def downloadPlayerSeasonStats(today, date, file_date):
     else:
         date_stamp = date
         file_datestamp = file_date
-    download_url = "https://www.naturalstattrick.com/playerteams.php?fromseason=20222023&thruseason=20222023&stype=2&sit=all&score=all&stdoi=std&rate=n&team=ALL&pos=S&loc=B&toi=0&gpfilt=none&fd=&td=" + date_stamp + "&tgp=410&lines=single&draftteam=ALL"
+    download_url = "https://www.naturalstattrick.com/playerteams.php?fromseason=20222023&thruseason=20222023&stype=2&sit=all&score=all&stdoi=std&rate=n&team=ALL&pos=S&loc=B&toi=0&gpfilt=gpdate&fd=&td=" + date_stamp + "&tgp=410&lines=single&draftteam=ALL"
     
     driver = webdriver.Chrome(executable_path="C:\Drivers\chromedriver\chromedriver.exe", chrome_options = chromeOptions)
 
@@ -75,10 +75,10 @@ def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 def downloadSeasonPlayerStats():
-    start_date = date(2021, 10, 12)
-    end_date = date(2022, 4, 29)
+    start_date = date(2023, 2, 28)
+    end_date = date(2023, 3, 2)
     for single_date in daterange(start_date, end_date):
-        downloadPlayerSeasonStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%d-%m-%y"))
+        downloadPlayerSeasonStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%Y-%m-%d"))
         print(single_date.strftime("%Y-%m-%d") + " processed")
 #downloadSeasonPlayerStats()
 #downloadPlayerSeasonStats(today = True, date = None, file_date = None)
