@@ -1,0 +1,22 @@
+2023-03-11 Boston Bruins Detroit Red Wings
+2023-03-11 Pittsburgh Penguins Philadelphia Flyers
+2023-03-11 Buffalo Sabres New York Rangers
+2023-03-11 Colorado Avalanche Arizona Coyotes
+2023-03-11 Tampa Bay Lightning Chicago Blackhawks
+2023-03-11 Toronto Maple Leafs Edmonton Oilers
+2023-03-11 Montréal Canadiens New Jersey Devils
+2023-03-11 Columbus Blue Jackets St. Louis Blues
+2023-03-11 Carolina Hurricanes Vegas Golden Knights
+2023-03-11 Florida Panthers Winnipeg Jets
+2023-03-11 New York Islanders Washington Capitals
+2023-03-11 Seattle Kraken Dallas Stars
+2023-03-11 Vancouver Canucks Ottawa Senators
+2023-03-11 San Jose Sharks Minnesota Wild
+2023-03-11 Los Angeles Kings Nashville Predators
+[(2022021036, '2023-03-11'), (2022021037, '2023-03-11'), (2022021038, '2023-03-11'), (2022021039, '2023-03-11'), (2022021040, '2023-03-11'), (2022021041, '2023-03-11')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021036/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021037/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021038/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021039/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021040/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021041/boxscore

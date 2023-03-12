@@ -75,8 +75,8 @@ def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 def downloadSeasonPlayerStats():
-    start_date = date(2023, 2, 28)
-    end_date = date(2023, 3, 2)
+    start_date = date(2023, 3, 2)
+    end_date = date(2023, 3, 7)
     for single_date in daterange(start_date, end_date):
         downloadPlayerSeasonStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%Y-%m-%d"))
         print(single_date.strftime("%Y-%m-%d") + " processed")

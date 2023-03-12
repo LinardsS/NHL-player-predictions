@@ -138,5 +138,43 @@ c = conn.cursor()
 #             decision text
 #             )""")
 
+c.execute("""CREATE TABLE skater_season_totals(
+            nst_player_id integer,
+            player_name text,
+            team text,
+            date text,
+            games_played integer,
+            time_on_ice real,
+            goals integer,
+            assists integer,
+            first_assists integer,
+            second_assists integer,
+            points integer,
+            ipp real,
+            shots integer,
+            shooting_pct real,
+            ixg real,
+            icf integer,
+            iff integer,
+            iscf integer,
+            ihdcf integer,
+            rush_attempts integer,
+            rebounds_created integer,
+            penalty_minutes integer,
+            total_penalties integer,
+            minor integer,
+            major integer,
+            misconduct integer,
+            penalties_drawn integer,
+            giveaways integer,
+            takeaways integer,
+            hits integer,
+            hits_taken integer,
+            shots_blocked integer,
+            faceoffs_won integer,
+            faceoffs_lost integer,
+            faceoff_pct real
+            )""")
+
 conn.commit()
 conn.close()
