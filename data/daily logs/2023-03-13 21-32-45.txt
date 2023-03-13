@@ -1,0 +1,25 @@
+2023-03-12 Detroit Red Wings Boston Bruins
+2023-03-12 Pittsburgh Penguins New York Rangers
+2023-03-12 St. Louis Blues Vegas Golden Knights
+2023-03-12 New Jersey Devils Carolina Hurricanes
+2023-03-12 Tampa Bay Lightning Winnipeg Jets
+2023-03-12 Calgary Flames Ottawa Senators
+2023-03-12 Arizona Coyotes Minnesota Wild
+2023-03-12 Anaheim Ducks Nashville Predators
+[(2022021042, '2023-03-12'), (2022021043, '2023-03-12'), (2022021044, '2023-03-12'), (2022021045, '2023-03-12'), (2022021046, '2023-03-12'), (2022021047, '2023-03-12'), (2022021048, '2023-03-12'), (2022021049, '2023-03-12'), (2022021050, '2023-03-12'), (2022021051, '2023-03-12'), (2022021052, '2023-03-12'), (2022021053, '2023-03-12'), (2022021054, '2023-03-12'), (2022021056, '2023-03-12'), (2022021055, '2023-03-12'), (2022021057, '2023-03-12')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021042/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021043/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021044/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021045/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021046/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021047/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021048/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021049/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021050/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021051/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021052/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021053/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021054/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021056/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021055/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021057/boxscore

@@ -5,7 +5,7 @@ from os import path
 import pandas as pd
 import numpy as np
 from downloadCsv import daterange
-from datetime import date
+from datetime import date, timedelta
 
 
 def uploadNHLTeamsToDatabase(db_name):
@@ -576,10 +576,14 @@ def uploadNHLPlayerGameDataToDatabase(db_name, from_date = None, to_date = None)
     conn.commit()
     conn.close()
         
-def uploadNHLPlayerSeasonDataToDatabase(db_name, start_y, start_m, start_d, end_date_y, end_date_m, end_date_d):
+def uploadNHLPlayerSeasonDataToDatabase(db_name, start_y = None, start_m = None, start_d = None, end_date_y = None, end_date_m = None, end_date_d = None):
     conn = establishDatabaseConnection(db_name)
-    start_date = date(start_y, start_m, start_d)
-    end_date = date(end_date_y, end_date_m, end_date_d)
+    if start_y is None: # assume that this param missing indicates the rest are empty as well(only call currently in daily.py)
+        start_date = date.today() - timedelta(1)
+        end_date = date.today()
+    else:
+        start_date = date(start_y, start_m, start_d)
+        end_date = date(end_date_y, end_date_m, end_date_d)
     FILE_SUFFIX = " - Player Season Totals.csv"
     for single_date in daterange(start_date, end_date):
         basepath = path.dirname(__file__)
