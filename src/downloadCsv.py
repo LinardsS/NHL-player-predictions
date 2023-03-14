@@ -80,5 +80,35 @@ def downloadSeasonPlayerStats():
     for single_date in daterange(start_date, end_date):
         downloadPlayerSeasonStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%Y-%m-%d"))
         print(single_date.strftime("%Y-%m-%d") + " processed")
+
+def downloadPlayerLastTwoWkStats(today, start_date, end_date):
+    dataDirectory = getDataDirectory()
+    directory = dataDirectory
+    chromeOptions = Options()
+    chromeOptions.add_experimental_option("prefs",{"download.default_directory": directory})
+
+    if today is True:
+        end_date = utils.getTodaysDate("%Y-%m-%d",backdate = True) # need to backdate due to NSS storing yesterday's file when accessing it in the morning
+        start_date = date.today() + timedelta(-14)
+        start_date = start_date.strftime("%Y-%m-%d")
+    
+    file_datestamp = end_date
+    download_url = "https://www.naturalstattrick.com/playerteams.php?fromseason=20222023&thruseason=20222023&stype=2&sit=all&score=all&stdoi=std&rate=n&team=ALL&pos=S&loc=B&toi=0&gpfilt=gpdate&fd={}&td={}&tgp=410&lines=single&draftteam=ALL".format(start_date, end_date)
+    print(download_url)
+    driver = webdriver.Chrome(executable_path="C:\Drivers\chromedriver\chromedriver.exe", chrome_options = chromeOptions)
+
+    driver.get(download_url)
+
+    driver.maximize_window()
+    download_button = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "a.dt-button:nth-child(4)")))
+    #click the download button
+    download_button.click()
+    time.sleep(3)
+    driver.close()
+
+    old_file = os.path.join(directory, "Player Season Totals - Natural Stat Trick.csv")
+    new_file = os.path.join(directory, file_datestamp + " - Player 2 Week Totals" + ".csv")
+    os.rename(old_file, new_file)
 #downloadSeasonPlayerStats()
 #downloadPlayerSeasonStats(today = True, date = None, file_date = None)
+#downloadPlayerLastTwoWkStats(True, None, None)

@@ -1,0 +1,10 @@
+2023-03-13 Toronto Maple Leafs Buffalo Sabres
+2023-03-13 Montréal Canadiens Colorado Avalanche
+2023-03-13 Seattle Kraken Dallas Stars
+[(2022021059, '2023-03-13'), (2022021058, '2023-03-13'), (2022021060, '2023-03-13'), (2022021061, '2023-03-13'), (2022021062, '2023-03-13')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021059/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021058/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021060/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021061/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021062/boxscore
+2023-03-13 - Player Season Totals.csv processed
