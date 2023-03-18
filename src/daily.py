@@ -14,9 +14,21 @@ sys.stdout = open(filepath, 'w')
 downloadPlayerSeasonStats(today = True, date = None, file_date = None) # downloads player season stats file
 downloadTeamStats(today = True, date = None, file_date = None)
 downloadPlayerLastTwoWkStats(True, None, None)
-uploadGameResultsAndTeamStats()
-uploadNHLPlayerGameDataToDatabase("main.db")
-uploadNHLPlayerSeasonDataToDatabase("main.db")
+try:
+    uploadGameResultsAndTeamStats()
+except Exception as e:
+    print("Error in uploadGameResultsAndTeamStats")
+    print(e)
+try:
+    uploadNHLPlayerGameDataToDatabase("main.db")
+except Exception as e:
+    print("Error in uploadNHLPlayerGameDataToDatabase")
+    print(e)
+try:
+    uploadNHLPlayerSeasonDataToDatabase("main.db")
+except Exception as e:
+    print("Error in uploadNHLPlayerSeasonDataToDatabase")
+    print(e)
 
 
 sys.stdout.close()

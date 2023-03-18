@@ -1,0 +1,19 @@
+2023-03-16 Ottawa Senators Colorado Avalanche
+2023-03-16 Florida Panthers Montréal Canadiens
+2023-03-16 New York Rangers Pittsburgh Penguins
+2023-03-16 New Jersey Devils Tampa Bay Lightning
+2023-03-16 Winnipeg Jets Boston Bruins
+2023-03-16 Nashville Predators Chicago Blackhawks
+2023-03-16 Edmonton Oilers Dallas Stars
+2023-03-16 Vegas Golden Knights Calgary Flames
+2023-03-16 Arizona Coyotes Vancouver Canucks
+2023-03-16 Los Angeles Kings Columbus Blue Jackets
+2023-03-16 San Jose Sharks Seattle Kraken
+[(2022021078, '2023-03-16'), (2022021079, '2023-03-16'), (2022021080, '2023-03-16'), (2022021081, '2023-03-16'), (2022021082, '2023-03-16'), (2022021083, '2023-03-16')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021078/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021079/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021080/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021081/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021082/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021083/boxscore
+2023-03-16 - Player Season Totals.csv processed

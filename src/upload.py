@@ -14,7 +14,7 @@ def uploadGameResultsAndTeamStats(start_date = None, end_date = None):
     request = requests.get(url)
     requestJson = request.json()
 
-    conn = sqlite3.connect("main.db")
+    conn = utils.establishDatabaseConnection("main.db")
     c = conn.cursor()
     
     for date in requestJson['dates']:
@@ -49,7 +49,7 @@ def uploadGameResultsAndTeamStats(start_date = None, end_date = None):
                     print(game_date,home_team,away_team)
                     # Special é character exception
                     home_team, away_team = utils.handleSpecialCharactersInTeamNames(home_team, away_team)
-                    
+
                     game_dict = importCsv.getTeamsStats(game_date, home_team, away_team, backdate = True)
                     if game_dict == {}:
                         print("Team data missing for: \n")
@@ -128,7 +128,6 @@ def uploadGameResultsAndTeamStats(start_date = None, end_date = None):
                         a_hdgf_pct,a_hdsh_pct,a_hdsv_pct,a_mdsf_pct,a_mdgf_pct,a_mdsh_pct,
                         a_mdsv_pct,a_ldsf_pct,a_ldgf_pct,a_ldsh_pct,a_ldsv_pct, 
                         a_sh_pct,a_sv_pct,a_PDO, game_id)
-
                     query = """UPDATE games SET 
                     home_team_goals = ?,
                     away_team_goals = ?,
@@ -186,8 +185,13 @@ def uploadGameResultsAndTeamStats(start_date = None, end_date = None):
                     a_sv_pct = ?,
                     a_PDO = ?
                     WHERE id = ?"""
-
-                    c.execute(query, game_tuple)
+                    
+                    try: 
+                        c.execute(query, game_tuple)
+                    except Exception as e:
+                        print("c.execute failed with: " + str(e))
+                        raise Exception(e)
+                    print("Database entry updated for " + game_date + " " + home_team + " vs " + away_team)
 
     conn.commit()
     conn.close()   

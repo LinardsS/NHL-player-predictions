@@ -21,9 +21,12 @@ def getTomorrowsDate(format = "%Y-%m-%d"):
 def establishDatabaseConnection(db_name):
     conn = None
     try:
-        conn = sqlite3.connect(db_name)
-    except Error as e:
+        BASE_DIR = path.join(path.dirname( __file__ ), '..' )
+        db_path = path.join(BASE_DIR, db_name)
+        conn = sqlite3.connect(db_path)
+    except Exception as e:
         print(e)
+        raise Exception(e)
 
     return conn
 

@@ -1,0 +1,15 @@
+2023-03-15 Washington Capitals Buffalo Sabres
+2023-03-15 Toronto Maple Leafs Colorado Avalanche
+2023-03-15 St. Louis Blues Minnesota Wild
+2023-03-15 Anaheim Ducks New York Islanders
+[(2022021069, '2023-03-15'), (2022021070, '2023-03-15'), (2022021071, '2023-03-15'), (2022021072, '2023-03-15'), (2022021073, '2023-03-15'), (2022021074, '2023-03-15'), (2022021075, '2023-03-15'), (2022021076, '2023-03-15'), (2022021077, '2023-03-15')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021069/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021070/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021071/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021072/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021073/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021074/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021075/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021076/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021077/boxscore
+2023-03-15 - Player Season Totals.csv processed
