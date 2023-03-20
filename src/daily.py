@@ -1,6 +1,6 @@
 from downloadCsv import downloadPlayerSeasonStats, downloadTeamStats, downloadPlayerLastTwoWkStats
 from upload import uploadGameResultsAndTeamStats
-from getNHLData import uploadNHLPlayerGameDataToDatabase, uploadNHLPlayerSeasonDataToDatabase
+from getNHLData import uploadNHLPlayerGameDataToDatabase, uploadNHLPlayerSeasonDataToDatabase, uploadNHLPlayerTwoWkSeasonDataToDatabase
 from utils import getTodaysDate, getTomorrowsDate
 #from predictions import predictSlate, scorePredictions
 import sys
@@ -28,6 +28,11 @@ try:
     uploadNHLPlayerSeasonDataToDatabase("main.db")
 except Exception as e:
     print("Error in uploadNHLPlayerSeasonDataToDatabase")
+    print(e)
+try:
+    uploadNHLPlayerTwoWkSeasonDataToDatabase("main.db")
+except Exception as e:
+    print("Error in uploadNHLPlayerTwoWkSeasonDataToDatabase")
     print(e)
 
 

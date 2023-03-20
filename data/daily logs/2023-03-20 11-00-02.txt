@@ -1,0 +1,27 @@
+2023-03-19 Buffalo Sabres Boston Bruins
+Database entry updated for 2023-03-19 Buffalo Sabres vs Boston Bruins
+2023-03-19 Minnesota Wild Washington Capitals
+Database entry updated for 2023-03-19 Minnesota Wild vs Washington Capitals
+2023-03-19 Vegas Golden Knights Columbus Blue Jackets
+Database entry updated for 2023-03-19 Vegas Golden Knights vs Columbus Blue Jackets
+2023-03-19 St. Louis Blues Winnipeg Jets
+Database entry updated for 2023-03-19 St Louis Blues vs Winnipeg Jets
+2023-03-19 New York Rangers Nashville Predators
+Database entry updated for 2023-03-19 New York Rangers vs Nashville Predators
+2023-03-19 Tampa Bay Lightning New Jersey Devils
+Database entry updated for 2023-03-19 Tampa Bay Lightning vs New Jersey Devils
+2023-03-19 Anaheim Ducks Vancouver Canucks
+Database entry updated for 2023-03-19 Anaheim Ducks vs Vancouver Canucks
+[(2022021103, '2023-03-19'), (2022021105, '2023-03-19'), (2022021104, '2023-03-19'), (2022021106, '2023-03-19'), (2022021107, '2023-03-19'), (2022021108, '2023-03-19'), (2022021109, '2023-03-19'), (2022021110, '2023-03-19'), (2022021113, '2023-03-19'), (2022021111, '2023-03-19'), (2022021112, '2023-03-19')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021103/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021105/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021104/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021106/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021107/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021108/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021109/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021110/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021113/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021111/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021112/boxscore
+2023-03-19 - Player Season Totals.csv processed

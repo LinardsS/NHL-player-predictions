@@ -1,0 +1,37 @@
+2023-03-18 Detroit Red Wings Colorado Avalanche
+Database entry updated for 2023-03-18 Detroit Red Wings vs Colorado Avalanche
+2023-03-18 Minnesota Wild Boston Bruins
+Database entry updated for 2023-03-18 Minnesota Wild vs Boston Bruins
+2023-03-18 Nashville Predators Winnipeg Jets
+Database entry updated for 2023-03-18 Nashville Predators vs Winnipeg Jets
+2023-03-18 Seattle Kraken Edmonton Oilers
+Database entry updated for 2023-03-18 Seattle Kraken vs Edmonton Oilers
+2023-03-18 Philadelphia Flyers Carolina Hurricanes
+Database entry updated for 2023-03-18 Philadelphia Flyers vs Carolina Hurricanes
+2023-03-18 Florida Panthers New Jersey Devils
+Database entry updated for 2023-03-18 Florida Panthers vs New Jersey Devils
+2023-03-18 Tampa Bay Lightning Montréal Canadiens
+Database entry updated for 2023-03-18 Tampa Bay Lightning vs Montreal Canadiens
+2023-03-18 Ottawa Senators Toronto Maple Leafs
+Database entry updated for 2023-03-18 Ottawa Senators vs Toronto Maple Leafs
+2023-03-18 New York Rangers Pittsburgh Penguins
+Database entry updated for 2023-03-18 New York Rangers vs Pittsburgh Penguins
+2023-03-18 Los Angeles Kings Vancouver Canucks
+Database entry updated for 2023-03-18 Los Angeles Kings vs Vancouver Canucks
+2023-03-18 Calgary Flames Dallas Stars
+Database entry updated for 2023-03-18 Calgary Flames vs Dallas Stars
+2023-03-18 Arizona Coyotes Chicago Blackhawks
+Database entry updated for 2023-03-18 Arizona Coyotes vs Chicago Blackhawks
+2023-03-18 San Jose Sharks New York Islanders
+Database entry updated for 2023-03-18 San Jose Sharks vs New York Islanders
+[(2022021094, '2023-03-18'), (2022021095, '2023-03-18'), (2022021096, '2023-03-18'), (2022021097, '2023-03-18'), (2022021098, '2023-03-18'), (2022021099, '2023-03-18'), (2022021100, '2023-03-18'), (2022021101, '2023-03-18'), (2022021102, '2023-03-18')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021094/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021095/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021096/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021097/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021098/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021099/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021100/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021101/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021102/boxscore
+2023-03-18 - Player Season Totals.csv processed

@@ -783,4 +783,4 @@ def uploadNHLPlayerTwoWkSeasonDataToDatabase(db_name, start_y = None, start_m = 
 #uploadNHLGameDataToDatabaseFromFile("main.db")
 #######uploadNHLPlayerGameDataToDatabase("main.db", "2022-10-07", "2023-03-08")
 ####uploadNHLPlayerSeasonDataToDatabase("main.db", 2022, 10, 13, 2023, 3, 12)
-###uploadNHLPlayerTwoWkSeasonDataToDatabase("main.db",2023,1,1, 2023,3,18)
+##uploadNHLPlayerTwoWkSeasonDataToDatabase("main.db",2023,3,18, 2023,3,19)
