@@ -214,5 +214,42 @@ c = conn.cursor()
 #             faceoff_pct real
 #             )""")
 
+# c.execute("""CREATE TABLE goalie_season_totals(
+#             player_name text,
+#             team text,
+#             date text,
+#             gp integer,
+#             toi real,
+#             shots_against integer,
+#             saves integer,
+#             goals_against integer,
+#             sv_pct real,
+#             gaa real,
+#             gsaa real,
+#             xg_against real,
+#             hd_shots_against integer,
+#             hd_saves integer,
+#             hd_goals_against integer,
+#             hdsv_pct real,
+#             hdgaa real,
+#             hdgsaa real,
+#             md_shots_against integer,
+#             md_saves integer,
+#             md_goals_against integer,
+#             mdsv_pct real,
+#             mdgaa real,
+#             mdgsaa real,
+#             ld_shots_against integer,
+#             ld_saves integer,
+#             ld_goals_against integer,
+#             ldsv_pct real,
+#             ldgaa real,
+#             ldgsaa real,
+#             rush_attempts_against integer,
+#             rebound_attempts_against integer,
+#             avg_shot_distance real,
+#             avg_goal_distance real
+#             )""")
+
 conn.commit()
 conn.close()

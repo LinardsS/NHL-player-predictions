@@ -1,0 +1,16 @@
+2023-03-20 Pittsburgh Penguins Ottawa Senators
+Database entry updated for 2023-03-20 Pittsburgh Penguins vs Ottawa Senators
+2023-03-20 Detroit Red Wings Florida Panthers
+Database entry updated for 2023-03-20 Detroit Red Wings vs Florida Panthers
+2023-03-20 Colorado Avalanche Chicago Blackhawks
+Database entry updated for 2023-03-20 Colorado Avalanche vs Chicago Blackhawks
+2023-03-20 Edmonton Oilers San Jose Sharks
+Database entry updated for 2023-03-20 Edmonton Oilers vs San Jose Sharks
+2023-03-20 Los Angeles Kings Calgary Flames
+Database entry updated for 2023-03-20 Los Angeles Kings vs Calgary Flames
+[(2022021114, '2023-03-20'), (2022021115, '2023-03-20'), (2022021116, '2023-03-20')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021114/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021115/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021116/boxscore
+2023-03-20 - Player Season Totals.csv processed
+2023-03-20 - Player 2 Week Totals.csv processed

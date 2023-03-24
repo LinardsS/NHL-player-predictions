@@ -14,6 +14,7 @@ def downloadPlayerSeasonStats(today, date, file_date):
     directory = dataDirectory
     chromeOptions = Options()
     chromeOptions.add_experimental_option("prefs",{"download.default_directory": directory})
+    chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     if today is True:
         date_stamp = utils.getTodaysDate("%Y-%m-%d",backdate = True) # need to backdate due to NSS storing yesterday's file when accessing it in the morning
@@ -43,6 +44,7 @@ def downloadTeamStats(today, date, file_date):
     directory = dataDirectory
     chromeOptions = Options()
     chromeOptions.add_experimental_option("prefs",{"download.default_directory": directory})
+    chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     if today is True:
         date_stamp = utils.getTodaysDate("%Y-%m-%d",backdate = True) # need to backdate due to NSS storing yesterday's file when accessing it in the morning
@@ -86,6 +88,7 @@ def downloadPlayerLastTwoWkStats(today, start_date, end_date):
     directory = dataDirectory
     chromeOptions = Options()
     chromeOptions.add_experimental_option("prefs",{"download.default_directory": directory})
+    chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     if today is True:
         end_date = utils.getTodaysDate("%Y-%m-%d",backdate = True) # need to backdate due to NSS storing yesterday's file when accessing it in the morning
@@ -119,7 +122,44 @@ def downloadPlayerLastTwoWkStatsSeason():
         to_date = single_date
         downloadPlayerLastTwoWkStats(today = False, start_date = from_date.strftime("%Y-%m-%d"), end_date=to_date.strftime("%Y-%m-%d"))
         print(single_date.strftime("%Y-%m-%d") + " processed")
+
+def downloadGoalieSeasonStats(today, date, file_date):
+    dataDirectory = getDataDirectory()
+    directory = dataDirectory
+    chromeOptions = Options()
+    chromeOptions.add_experimental_option("prefs",{"download.default_directory": directory})
+    chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+    if today is True:
+        date_stamp = utils.getTodaysDate("%Y-%m-%d",backdate = True) # need to backdate due to NSS storing yesterday's file when accessing it in the morning
+        file_datestamp = utils.getTodaysDate(backdate=True)
+    else:
+        date_stamp = date
+        file_datestamp = file_date
+    download_url = "https://www.naturalstattrick.com/playerteams.php?fromseason=20222023&thruseason=20222023&stype=2&sit=all&score=all&stdoi=g&rate=n&team=ALL&pos=S&loc=B&toi=0&gpfilt=gpdate&fd=&td=" + date_stamp + "&tgp=410&lines=single&draftteam=ALL"
+    driver = webdriver.Chrome(executable_path="C:\Drivers\chromedriver\chromedriver.exe", chrome_options = chromeOptions)
+
+    driver.get(download_url)
+
+    driver.maximize_window()
+    download_button = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "a.dt-button:nth-child(4)")))
+    #click the download button
+    download_button.click()
+    time.sleep(3)
+    driver.close()
+
+    old_file = os.path.join(directory, "Player Season Totals - Natural Stat Trick.csv")
+    new_file = os.path.join(directory, file_datestamp + " - Goalie Season Totals" + ".csv")
+    os.rename(old_file, new_file)
+def downloadSeasonGoalieStats():
+    start_date = date(2022, 10, 12)
+    end_date = date(2023, 3, 23)
+    for single_date in daterange(start_date, end_date):
+        downloadGoalieSeasonStats(today = False, date = single_date.strftime("%Y-%m-%d"), file_date=single_date.strftime("%Y-%m-%d"))
+        print(single_date.strftime("%Y-%m-%d") + " processed")
 #downloadSeasonPlayerStats()
 #downloadPlayerSeasonStats(today = True, date = None, file_date = None)
 #downloadPlayerLastTwoWkStats(True, None, None)
 #downloadPlayerLastTwoWkStatsSeason()
+# downloadGoalieSeasonStats(today = True, date = None, file_date = None)
+###downloadSeasonGoalieStats()
