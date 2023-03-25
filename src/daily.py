@@ -1,10 +1,10 @@
 from downloadCsv import downloadPlayerSeasonStats, downloadTeamStats, downloadPlayerLastTwoWkStats, downloadGoalieSeasonStats
 from upload import uploadGameResultsAndTeamStats
-from getNHLData import uploadNHLPlayerGameDataToDatabase, uploadNHLPlayerSeasonDataToDatabase, uploadNHLPlayerTwoWkSeasonDataToDatabase, uploadNHLGoalieSeasonDataToDatabase
+from getNHLData import uploadNHLPlayerGameDataToDatabase, uploadNHLPlayerSeasonDataToDatabase, uploadNHLPlayerTwoWkSeasonDataToDatabase, uploadNHLGoalieSeasonDataToDatabase, uploadNHLGoalieTwoWkDataToDatabase
 from utils import getTodaysDate, getTomorrowsDate
 #from predictions import predictSlate, scorePredictions
 import sys
-from os import path
+from os import path, startfile
 basepath = path.dirname(__file__)
 todays_date = getTodaysDate("%Y-%m-%d %H-%M-%S")
 todays_date = todays_date + '.txt'
@@ -41,7 +41,13 @@ try:                                                     ## Goalie Season Data t
 except Exception as e:
     print("Error in uploadNHLGoalieSeasonDataToDatabase")
     print(e)
+try:                                                     ## Goalie Two Week Data to DB
+    uploadNHLGoalieTwoWkDataToDatabase("main.db")
+except Exception as e:
+    print("Error in uploadNHLGoalieSeasonDataToDatabase")
+    print(e)
 
 
 
 sys.stdout.close()
+startfile(filepath)

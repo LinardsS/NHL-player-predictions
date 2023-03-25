@@ -875,6 +875,102 @@ def uploadNHLGoalieSeasonDataToDatabase(db_name, start_y = None, start_m = None,
         print(filename + " processed")
     
     conn.commit()
+
+def uploadNHLGoalieTwoWkDataToDatabase(db_name, start_y = None, start_m = None, start_d = None, end_date_y = None, end_date_m = None, end_date_d = None):
+    conn = establishDatabaseConnection(db_name)
+    if start_y is None: # assume that this param missing indicates the rest are empty as well(only call currently in daily.py)
+        start_date = date.today() - timedelta(1)
+        end_date = date.today()
+    else:
+        start_date = date(start_y, start_m, start_d)
+        end_date = date(end_date_y, end_date_m, end_date_d)
+    FILE_SUFFIX = " - Goalie 2 Week Totals.csv"
+    for single_date in daterange(start_date, end_date):
+        basepath = path.dirname(__file__)
+        datestring = single_date.strftime("%Y-%m-%d")
+        filename = datestring + FILE_SUFFIX
+        filepath = path.abspath(path.join(basepath, "..", "data", filename))
+        df = pd.read_csv(filepath)
+        for index, row in df.iterrows():
+            player_name = row["Player"]
+            player_team = row["Team"]
+            gp = row["GP"]
+            toi = row["TOI"]
+            shots_against = row["Shots Against"]
+            saves = row["Saves"]
+            goals_against = row["Goals Against"]
+            sv_pct = row["SV%"]
+            gaa = row["GAA"]
+            gsaa = row["GSAA"]
+            xg_against = row["xG Against"]
+            hd_shots_against = row["HD Shots Against"]
+            hd_saves = row["HD Saves"]
+            hd_goals_against = row["HD Goals Against"]
+            hdsv_pct = row['HDSV%']
+            hdgaa =  row['HDGAA']
+            hdgsaa =  row['HDGSAA']
+            md_shots_against =  row['MD Shots Against']
+            md_saves = row['MD Saves']
+            md_goals_against =  row['MD Goals Against']
+            mdsv_pct =  row['MDSV%']
+            mdgaa =  row['MDGAA']
+            mdgsaa =  row['MDGSAA']
+            ld_shots_against =  row['LD Shots Against']
+            ld_saves =  row['LD Saves']
+            ld_goals_against =  row['LD Goals Against']
+            ldsv_pct =  row['LDSV%']
+            ldgaa =  row['LDGAA']
+            ldgsaa =  row['LDGSAA']
+            rush_attempts_against =  row['Rush Attempts Against']
+            rebound_attempts_against =  row['Rebound Attempts Against']
+            avg_shot_distance =  row['Avg. Shot Distance']
+            avg_goal_distance =  row['Avg. Goal Distance']
+
+            player_tuple = (player_name, player_team, datestring, gp, toi, shots_against, saves, goals_against, sv_pct, gaa,gsaa,
+                            xg_against,  hd_shots_against, hd_saves, hd_goals_against,  hdsv_pct, hdgaa, hdgsaa, md_shots_against,
+                            md_saves, md_goals_against, mdsv_pct, mdgaa, mdgsaa, ld_shots_against, ld_saves, ld_goals_against,
+                            ldsv_pct, ldgaa, ldgsaa, rush_attempts_against,rebound_attempts_against,avg_shot_distance, avg_goal_distance)
+            query = """INSERT INTO goalie_two_wk_totals(
+                player_name,
+                team,
+                date,
+                gp,
+                toi,
+                shots_against,
+                saves,
+                goals_against,
+                sv_pct,
+                gaa,
+                gsaa,
+                xg_against,
+                hd_shots_against,
+                hd_saves,
+                hd_goals_against,
+                hdsv_pct,
+                hdgaa,
+                hdgsaa,
+                md_shots_against,
+                md_saves,
+                md_goals_against,
+                mdsv_pct,
+                mdgaa,
+                mdgsaa,
+                ld_shots_against,
+                ld_saves,
+                ld_goals_against,
+                ldsv_pct,
+                ldgaa,
+                ldgsaa,
+                rush_attempts_against,
+                rebound_attempts_against,
+                avg_shot_distance,
+                avg_goal_distance)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
+            c = conn.cursor()
+            c.execute(query, player_tuple)
+        print(filename + " processed")
+    
+    conn.commit()
 #uploadNHLTeamsToDatabase("main.db")
 #uploadNHLPlayersToDatabase("main.db")
 #uploadNHLGameDataToDatabaseFromFile("main.db")
@@ -882,3 +978,4 @@ def uploadNHLGoalieSeasonDataToDatabase(db_name, start_y = None, start_m = None,
 ####uploadNHLPlayerSeasonDataToDatabase("main.db", 2022, 10, 13, 2023, 3, 12)
 ##uploadNHLPlayerTwoWkSeasonDataToDatabase("main.db",2023,3,18, 2023,3,19)
 ###uploadNHLGoalieSeasonDataToDatabase("main.db", 2022, 10, 13, 2023, 3, 23)
+##uploadNHLGoalieTwoWkDataToDatabase("main.db",2022,10,26, 2023,3,25)

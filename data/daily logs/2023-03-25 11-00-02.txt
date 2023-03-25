@@ -1,0 +1,17 @@
+2023-03-24 Columbus Blue Jackets New York Islanders
+Database entry updated for 2023-03-24 Columbus Blue Jackets vs New York Islanders
+2023-03-24 Buffalo Sabres New Jersey Devils
+Database entry updated for 2023-03-24 Buffalo Sabres vs New Jersey Devils
+2023-03-24 Colorado Avalanche Arizona Coyotes
+Database entry updated for 2023-03-24 Colorado Avalanche vs Arizona Coyotes
+[(2022021142, '2023-03-24'), (2022021144, '2023-03-24'), (2022021143, '2023-03-24'), (2022021145, '2023-03-24'), (2022021146, '2023-03-24'), (2022021147, '2023-03-24'), (2022021148, '2023-03-24')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021142/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021144/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021143/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021145/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021146/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021147/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021148/boxscore
+2023-03-24 - Player Season Totals.csv processed
+2023-03-24 - Player 2 Week Totals.csv processed
+2023-03-24 - Goalie Season Totals.csv processed
