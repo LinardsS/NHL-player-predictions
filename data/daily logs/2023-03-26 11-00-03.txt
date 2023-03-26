@@ -1,0 +1,49 @@
+2023-03-25 Philadelphia Flyers Detroit Red Wings
+Database entry updated for 2023-03-25 Philadelphia Flyers vs Detroit Red Wings
+2023-03-25 Boston Bruins Tampa Bay Lightning
+Database entry updated for 2023-03-25 Boston Bruins vs Tampa Bay Lightning
+2023-03-25 Nashville Predators Seattle Kraken
+Database entry updated for 2023-03-25 Nashville Predators vs Seattle Kraken
+2023-03-25 Los Angeles Kings Winnipeg Jets
+Database entry updated for 2023-03-25 Los Angeles Kings vs Winnipeg Jets
+2023-03-25 Calgary Flames San Jose Sharks
+Database entry updated for 2023-03-25 Calgary Flames vs San Jose Sharks
+2023-03-25 Minnesota Wild Chicago Blackhawks
+Database entry updated for 2023-03-25 Minnesota Wild vs Chicago Blackhawks
+2023-03-25 Florida Panthers New York Rangers
+Database entry updated for 2023-03-25 Florida Panthers vs New York Rangers
+2023-03-25 New York Islanders Buffalo Sabres
+Database entry updated for 2023-03-25 New York Islanders vs Buffalo Sabres
+2023-03-25 Dallas Stars Vancouver Canucks
+Database entry updated for 2023-03-25 Dallas Stars vs Vancouver Canucks
+2023-03-25 Montréal Canadiens Columbus Blue Jackets
+Database entry updated for 2023-03-25 Montreal Canadiens vs Columbus Blue Jackets
+2023-03-25 New Jersey Devils Ottawa Senators
+Database entry updated for 2023-03-25 New Jersey Devils vs Ottawa Senators
+2023-03-25 Carolina Hurricanes Toronto Maple Leafs
+Database entry updated for 2023-03-25 Carolina Hurricanes vs Toronto Maple Leafs
+2023-03-25 Pittsburgh Penguins Washington Capitals
+Database entry updated for 2023-03-25 Pittsburgh Penguins vs Washington Capitals
+2023-03-25 Edmonton Oilers Vegas Golden Knights
+Database entry updated for 2023-03-25 Edmonton Oilers vs Vegas Golden Knights
+2023-03-25 Anaheim Ducks St. Louis Blues
+Database entry updated for 2023-03-25 Anaheim Ducks vs St Louis Blues
+[(2022021149, '2023-03-25'), (2022021150, '2023-03-25'), (2022021151, '2023-03-25'), (2022021152, '2023-03-25'), (2022021154, '2023-03-25'), (2022021153, '2023-03-25'), (2022021155, '2023-03-25'), (2022021156, '2023-03-25'), (2022021157, '2023-03-25'), (2022021161, '2023-03-25'), (2022021158, '2023-03-25'), (2022021159, '2023-03-25'), (2022021160, '2023-03-25')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021149/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021150/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021151/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021152/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021154/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021153/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021155/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021156/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021157/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021161/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021158/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021159/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021160/boxscore
+2023-03-25 - Player Season Totals.csv processed
+2023-03-25 - Player 2 Week Totals.csv processed
+2023-03-25 - Goalie Season Totals.csv processed
+Error in uploadNHLGoalieSeasonDataToDatabase
+[Errno 2] No such file or directory: 'C:\\Users\\lats4\\Desktop\\Bakalaura darbs\\NHL-player-predictions\\data\\2023-03-25 - Goalie 2 Week Totals.csv'

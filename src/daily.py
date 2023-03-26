@@ -1,4 +1,4 @@
-from downloadCsv import downloadPlayerSeasonStats, downloadTeamStats, downloadPlayerLastTwoWkStats, downloadGoalieSeasonStats
+from downloadCsv import downloadPlayerSeasonStats, downloadTeamStats, downloadPlayerLastTwoWkStats, downloadGoalieSeasonStats, downloadGoalieLastTwoWkStats
 from upload import uploadGameResultsAndTeamStats
 from getNHLData import uploadNHLPlayerGameDataToDatabase, uploadNHLPlayerSeasonDataToDatabase, uploadNHLPlayerTwoWkSeasonDataToDatabase, uploadNHLGoalieSeasonDataToDatabase, uploadNHLGoalieTwoWkDataToDatabase
 from utils import getTodaysDate, getTomorrowsDate
@@ -15,6 +15,7 @@ downloadPlayerSeasonStats(today = True, date = None, file_date = None) # downloa
 downloadTeamStats(today = True, date = None, file_date = None)
 downloadPlayerLastTwoWkStats(True, None, None)
 downloadGoalieSeasonStats(True, None, None)
+downloadGoalieLastTwoWkStats(True, None, None)
 
 try:                                                     ## Game results to DB
     uploadGameResultsAndTeamStats()
