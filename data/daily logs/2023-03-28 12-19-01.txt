@@ -1,0 +1,21 @@
+2023-03-27 Ottawa Senators Florida Panthers
+Database entry updated for 2023-03-27 Ottawa Senators vs Florida Panthers
+2023-03-27 Buffalo Sabres Montréal Canadiens
+Database entry updated for 2023-03-27 Buffalo Sabres vs Montreal Canadiens
+2023-03-27 New York Islanders New Jersey Devils
+Database entry updated for 2023-03-27 New York Islanders vs New Jersey Devils
+2023-03-27 Minnesota Wild Seattle Kraken
+Database entry updated for 2023-03-27 Minnesota Wild vs Seattle Kraken
+2023-03-27 Anaheim Ducks Colorado Avalanche
+Database entry updated for 2023-03-27 Anaheim Ducks vs Colorado Avalanche
+2023-03-27 Arizona Coyotes Edmonton Oilers
+Database entry updated for 2023-03-27 Arizona Coyotes vs Edmonton Oilers
+[(2022021169, '2023-03-27'), (2022021170, '2023-03-27'), (2022021171, '2023-03-27'), (2022021172, '2023-03-27')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021169/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021170/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021171/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021172/boxscore
+2023-03-27 - Player Season Totals.csv processed
+2023-03-27 - Player 2 Week Totals.csv processed
+2023-03-27 - Goalie Season Totals.csv processed
+2023-03-27 - Goalie 2 Week Totals.csv processed

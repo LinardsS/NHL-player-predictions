@@ -1,0 +1,18 @@
+2023-03-29 Toronto Maple Leafs Florida Panthers
+Database entry updated for 2023-03-29 Toronto Maple Leafs vs Florida Panthers
+2023-03-29 Washington Capitals New York Islanders
+Database entry updated for 2023-03-29 Washington Capitals vs New York Islanders
+2023-03-29 Colorado Avalanche Minnesota Wild
+Database entry updated for 2023-03-29 Colorado Avalanche vs Minnesota Wild
+[(2022021181, '2023-03-29'), (2022021182, '2023-03-29'), (2022021183, '2023-03-29'), (2022021184, '2023-03-29'), (2022021185, '2023-03-29'), (2022021186, '2023-03-29'), (2022021187, '2023-03-29')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021181/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021182/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021183/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021184/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021185/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021186/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021187/boxscore
+2023-03-29 - Player Season Totals.csv processed
+2023-03-29 - Player 2 Week Totals.csv processed
+2023-03-29 - Goalie Season Totals.csv processed
+2023-03-29 - Goalie 2 Week Totals.csv processed

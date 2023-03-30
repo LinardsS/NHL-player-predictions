@@ -971,6 +971,106 @@ def uploadNHLGoalieTwoWkDataToDatabase(db_name, start_y = None, start_m = None, 
         print(filename + " processed")
     
     conn.commit()
+
+def uploadNHLPlayerPPSeasonDataToDatabase(db_name, start_y = None, start_m = None, start_d = None, end_date_y = None, end_date_m = None, end_date_d = None):
+    conn = establishDatabaseConnection(db_name)
+    if start_y is None: # assume that this param missing indicates the rest are empty as well(only call currently in daily.py)
+        start_date = date.today() - timedelta(1)
+        end_date = date.today()
+    else:
+        start_date = date(start_y, start_m, start_d)
+        end_date = date(end_date_y, end_date_m, end_date_d)
+    FILE_SUFFIX = " - Player Season PP Totals.csv"
+    for single_date in daterange(start_date, end_date):
+        basepath = path.dirname(__file__)
+        datestring = single_date.strftime("%Y-%m-%d")
+        filename = datestring + FILE_SUFFIX
+        filepath = path.abspath(path.join(basepath, "..", "data", filename))
+        df = pd.read_csv(filepath)
+        for index, row in df.iterrows():
+            player_name = row["Player"]
+            player_team = row["Team"]
+            gp = row["GP"]
+            toi = row["TOI"]
+            goals = row["Goals"]
+            assists = row["Total Assists"]
+            first_assists = row["First Assists"]
+            second_assists = row["Second Assists"]
+            points = row["Total Points"]
+            ipp = row["IPP"]
+            shots = row["Shots"]
+            sh_pct = row["SH%"]
+            ixg = row["ixG"]
+            icf = row['iCF']
+            icf = icf / gp
+            iff =  row['iFF']
+            iff = iff / gp
+            iscf =  row['iSCF']
+            iscf = iscf / gp
+            ihdcf =  row['iHDCF']
+            ihdcf = ihdcf / gp
+            rush_attempts = row['Rush Attempts']
+            rebounds_created =  row['Rebounds Created']
+            penalty_minutes =  row['PIM']
+            total_penalties =  row['Total Penalties']
+            minor =  row['Minor']
+            major =  row['Major']
+            misconduct =  row['Misconduct']
+            penalties_drawn =  row['Penalties Drawn']
+            giveaways =  row['Giveaways']
+            takeaways =  row['Takeaways']
+            hits =  row['Hits']
+            hits_taken =  row['Hits Taken']
+            shots_blocked =  row['Shots Blocked']
+            faceoffs_won =  row['Faceoffs Won']
+            faceoffs_lost =  row['Faceoffs Lost']
+            faceoffs_pct =  row['Faceoffs %']
+
+            player_tuple = (player_name, player_team, datestring, gp, toi, goals, assists, first_assists, second_assists, points,
+                            ipp,  shots, sh_pct, ixg,  icf, iff, iscf, ihdcf, rush_attempts, rebounds_created, penalty_minutes,
+                            total_penalties, minor, major, misconduct, penalties_drawn, giveaways, takeaways, hits,
+                            hits_taken,shots_blocked,faceoffs_won, faceoffs_lost,faceoffs_pct)
+            query = """INSERT INTO skater_pp_totals(
+                player_name,
+                team,
+                date,
+                games_played,
+                time_on_ice,
+                goals,
+                assists,
+                first_assists,
+                second_assists,
+                points,
+                ipp,
+                shots,
+                shooting_pct,
+                ixg,
+                icf,
+                iff,
+                iscf,
+                ihdcf,
+                rush_attempts,
+                rebounds_created,
+                penalty_minutes,
+                total_penalties,
+                minor,
+                major,
+                misconduct,
+                penalties_drawn,
+                giveaways,
+                takeaways,
+                hits,
+                hits_taken,
+                shots_blocked,
+                faceoffs_won,
+                faceoffs_lost,
+                faceoff_pct)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
+            c = conn.cursor()
+            c.execute(query, player_tuple)
+        print(filename + " processed")
+    
+    conn.commit()    
 #uploadNHLTeamsToDatabase("main.db")
 #uploadNHLPlayersToDatabase("main.db")
 #uploadNHLGameDataToDatabaseFromFile("main.db")
@@ -979,3 +1079,4 @@ def uploadNHLGoalieTwoWkDataToDatabase(db_name, start_y = None, start_m = None, 
 ##uploadNHLPlayerTwoWkSeasonDataToDatabase("main.db",2023,3,18, 2023,3,19)
 ###uploadNHLGoalieSeasonDataToDatabase("main.db", 2022, 10, 13, 2023, 3, 23)
 ##uploadNHLGoalieTwoWkDataToDatabase("main.db",2022,10,26, 2023,3,25)
+###uploadNHLPlayerPPSeasonDataToDatabase("main.db",2023,3,29, 2023,3,30)

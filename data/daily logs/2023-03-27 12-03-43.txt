@@ -1,0 +1,8 @@
+[(2022021162, '2023-03-26'), (2022021163, '2023-03-26'), (2022021164, '2023-03-26'), (2022021165, '2023-03-26'), (2022021166, '2023-03-26'), (2022021167, '2023-03-26'), (2022021168, '2023-03-26')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021162/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021163/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021164/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021165/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021166/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021167/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021168/boxscore

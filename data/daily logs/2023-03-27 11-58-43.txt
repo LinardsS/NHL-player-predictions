@@ -1,0 +1,24 @@
+2023-03-26 Arizona Coyotes Colorado Avalanche
+Database entry updated for 2023-03-26 Arizona Coyotes vs Colorado Avalanche
+2023-03-26 Carolina Hurricanes Boston Bruins
+Database entry updated for 2023-03-26 Carolina Hurricanes vs Boston Bruins
+2023-03-26 Nashville Predators Toronto Maple Leafs
+Database entry updated for 2023-03-26 Nashville Predators vs Toronto Maple Leafs
+2023-03-26 Chicago Blackhawks Vancouver Canucks
+Database entry updated for 2023-03-26 Chicago Blackhawks vs Vancouver Canucks
+2023-03-26 Los Angeles Kings St. Louis Blues
+Database entry updated for 2023-03-26 Los Angeles Kings vs St Louis Blues
+[(2022021162, '2023-03-26'), (2022021163, '2023-03-26'), (2022021164, '2023-03-26'), (2022021165, '2023-03-26'), (2022021166, '2023-03-26'), (2022021167, '2023-03-26'), (2022021168, '2023-03-26')]
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021162/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021163/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021164/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021165/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021166/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021167/boxscore
+URL: https://statsapi.web.nhl.com/api/v1/game/2022021168/boxscore
+Error in uploadNHLPlayerGameDataToDatabase
+Expecting value: line 1 column 1 (char 0)
+2023-03-26 - Player Season Totals.csv processed
+2023-03-26 - Player 2 Week Totals.csv processed
+2023-03-26 - Goalie Season Totals.csv processed
+2023-03-26 - Goalie 2 Week Totals.csv processed
