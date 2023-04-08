@@ -1,3 +1,4 @@
 src/envVariables.py
 src/__pycache__/
 src/databaseQueries,py
+data/
