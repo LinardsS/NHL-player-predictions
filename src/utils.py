@@ -112,3 +112,26 @@ def handleSpecialCharactersInTeamNames(home_team, away_team):
         away_team = "St Louis Blues"
 
     return home_team, away_team
+
+def getStartingGoalieFromOpposingTeam(player_name, date):
+    conn = establishDatabaseConnection("main.db")
+    c = conn.cursor()
+    query_param = (player_name,date)
+    c.execute("""SELECT  ggd.player_name, ggd.time_on_ice 
+             FROM   goalie_game_data ggd, skater_game_data sgd, players p
+             WHERE  sgd.player_name = (?)
+             and    sgd.opponent_team_id = p.team_id
+             and    sgd.date = (?)
+             and    ggd.date = sgd.date
+             and    ggd.player_name = p.name
+             order by ggd.time_on_ice desc""", query_param)
+    return c.fetchone()[0]
+
+def getSqlTableColumnNames(db, table_name):
+    conn = establishDatabaseConnection(db)
+    c = conn.cursor()
+    query = "SELECT * FROM " + table_name + " WHERE 1=1 LIMIT 1"
+    c.execute(query)
+    field_names = [i[0] for i in c.description]
+    print(field_names)
+    return field_names
