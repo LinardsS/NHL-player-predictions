@@ -368,8 +368,328 @@ def trainSkaterSeasonPPTwoWkOppGoalieTotalsModel():
     datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
     filename = 'Linreg_SeasonPPTwoWkOppGoalie_' + str(r_sq_score) + '_'+ datum + '.sav'
     pickle.dump(linreg, open(filename, 'wb'))
+
+def trainSkaterSeasonTwoWkOppGoalieOppTeamTotalsModel():
+    linreg = LinearRegression()
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT twowk.games_played as twowk_games_played, twowk.time_on_ice as twowk_time_on_ice, twowk.goals as twowk_goals,
+                    twowk.assists as twowk_assists, twowk.first_assists as twowk_first_assists, twowk.second_assists as twowk_second_assists,
+                    twowk.points as twowk_points, twowk.ipp as twowk_ipp, twowk.shots as twowk_shots, twowk.shooting_pct as twowk_shooting_pct,
+                    twowk.ixg as twowk_ixg, twowk.icf as twowk_icf, twowk.iff as twowk_iff,
+                    twowk.iscf as twowk_iscf, twowk.ihdcf as twowk_ihdcf, twowk.rush_attempts as twowk_rush_attempts, twowk.rebounds_created as twowk_rebounds_created, 
+                    twowk.penalty_minutes as twowk_penalty_minutes, twowk.penalties_drawn as twowk_penalties_drawn, 
+                    twowk.giveaways as twowk_giveaways, twowk.takeaways as twowk_takeaways, twowk.hits as twowk_hits,  
+                    twowk.hits_taken as twowk_hits_taken, twowk.shots_blocked as twowk_shots_blocked, twowk.faceoffs_won as twowk_faceoffs_won,
+                    twowk.faceoffs_lost as twowk_faceoffs_lost, twowk.faceoff_pct as twowk_faceoff_pct,
+                    sst.games_played as sst_games_played, sst.time_on_ice as sst_time_on_ice, sst.goals as sst_goals,
+                    sst.assists as sst_assists, sst.first_assists as sst_first_assists, sst.second_assists as sst_second_assists,
+                    sst.points as sst_points, sst.ipp as sst_ipp, sst.shots as sst_shots, sst.shooting_pct as sst_shooting_pct,
+                    sst.ixg as sst_ixg, sst.icf as sst_icf, sst.iff as sst_iff,
+                    sst.iscf as sst_iscf, sst.ihdcf as sst_ihdcf, sst.rush_attempts as sst_rush_attempts, sst.rebounds_created as sst_rebounds_created, 
+                    sst.penalty_minutes as sst_penalty_minutes, sst.penalties_drawn as sst_penalties_drawn, 
+                    sst.giveaways as sst_giveaways, sst.takeaways as sst_takeaways, sst.hits as sst_hits,  
+                    sst.hits_taken as sst_hits_taken, sst.shots_blocked as sst_shots_blocked, sst.faceoffs_won as sst_faceoffs_won,
+                    sst.faceoffs_lost as sst_faceoffs_lost, sst.faceoff_pct as sst_faceoff_pct,
+                    sgd.time_on_ice as res_time_on_ice, sgd.goals as res_goals, sgd.assists as res_assists,
+                    sgd.shots as res_shots, sgd.hits as res_hits, sgd.power_play_goals as res_power_play_goals,
+                    sgd.power_play_assists as res_power_play_assists, sgd.penalty_minutes as res_penalty_minutes,
+                    sgd.face_off_pct as res_face_off_pct, sgd.face_off_wins as res_face_off_wins,
+                    sgd.takeaways as res_takeaways, sgd.giveaways as res_giveaways, 
+                    sgd.short_handed_goals as res_short_handed_goals, sgd.short_handed_assists as res_short_handed_assists,
+                    sgd.blocked_shots as res_blocked_shots, sgd.plus_minus as res_plus_minus,
+                    gst.gp as gst_gp,gst.toi as gst_toi, gst.shots_against as gst_shots_against, gst.saves as gst_saves,
+                    gst.goals_against as gst_goals_against, gst.sv_pct as gst_sv_pct, gst.gaa as gst_gaa, gst.gsaa as gst_gsaa,
+                    gst.xg_against as gst_xg_against, gst.hd_shots_against as gst_hd_shots_against,gst.hd_saves as gst_hd_saves,
+                    gst.hd_goals_against as gst_hd_goals_against, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa,
+                    gst.hdgsaa as gst_hdgsaa, gst.md_shots_against as gst_md_shots_against, gst.md_saves as gst_md_saves,
+                    gst.md_goals_against as gst_md_goals_against, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, 
+                    gst.mdgsaa as gst_mdgsaa,gst.ld_shots_against as gst_ld_shots_against, gst.ld_saves as gst_ld_saves,
+                    gst.ld_goals_against as gst_ld_goals_against, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                    gst.rush_attempts_against as gst_rush_attempts_against, gst.rebound_attempts_against as gst_rebound_attempts_against,
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_point_pct
+                            ELSE g.h_point_pct
+                            END AS opp_team_point_pct, 
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_cf_pct
+                            ELSE g.h_cf_pct
+                            END AS opp_cf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ff_pct
+                            ELSE g.h_ff_pct
+                            END AS opp_ff_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sf_pct
+                            ELSE g.h_sf_pct
+                            END AS opp_sf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_gf_pct
+                            ELSE g.h_gf_pct
+                            END AS opp_gf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_xgf_pct
+                            ELSE g.h_xgf_pct
+                            END AS opp_xgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scf_pct
+                            ELSE g.h_scf_pct
+                            END AS opp_scf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scsf_pct
+                            ELSE g.h_scsf_pct
+                            END AS opp_scsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scgf_pct
+                            ELSE g.h_scgf_pct
+                            END AS opp_scgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scsh_pct
+                            ELSE g.h_scsh_pct
+                            END AS opp_scsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scsv_pct
+                            ELSE g.h_scsv_pct
+                            END AS opp_scsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdsf_pct
+                            ELSE g.h_hdsf_pct
+                            END AS opp_hdsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdgf_pct
+                            ELSE g.h_hdgf_pct
+                            END AS opp_hdgf_pct,   
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdsh_pct
+                            ELSE g.h_hdsh_pct
+                            END AS opp_hdsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdsv_pct
+                            ELSE g.h_hdsv_pct
+                            END AS opp_hdsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdsf_pct
+                            ELSE g.h_mdsf_pct
+                            END AS opp_mdsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdgf_pct
+                            ELSE g.h_mdgf_pct
+                            END AS opp_mdgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdsh_pct
+                            ELSE g.h_mdsh_pct
+                            END AS opp_mdsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdsv_pct
+                            ELSE g.h_mdsv_pct
+                            END AS opp_mdsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldsf_pct
+                            ELSE g.h_ldsf_pct
+                            END AS opp_ldsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldgf_pct
+                            ELSE g.h_ldgf_pct
+                            END AS opp_ldgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldsh_pct
+                            ELSE g.h_ldsh_pct
+                            END AS opp_ldsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldsv_pct
+                            ELSE g.h_ldsv_pct
+                            END AS opp_ldsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sh_pct
+                            ELSE g.h_sh_pct
+                            END AS opp_sh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sv_pct
+                            ELSE g.h_sv_pct
+                            END AS opp_sv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_PDO
+                            ELSE g.h_PDO
+                            END AS opp_PDO
+            FROM   games g, skater_game_data sgd, skater_two_wk_totals twowk, skater_season_totals sst, goalie_season_totals gst, teams t
+            WHERE  g.id = sgd.game_id
+            and    g.date >= (?)
+            and    g.date <= (?)
+            and    sgd.player_name = sst.player_name
+            and    twowk.player_name = sst.player_name
+            and    sst.date = DATE(g.date, '-1 day')
+            and    twowk.date = sst.date
+            and    gst.player_name = (SELECT  ggd.player_name 
+                                    FROM   goalie_game_data ggd, skater_game_data sgd, players p, games g
+                                    WHERE  sgd.player_name = sst.player_name
+                                    and    sgd.opponent_team_id = p.team_id
+                                    and    g.id = sgd.game_id
+                                    and    ggd.date = sgd.date
+                                    and    ggd.player_name = p.name
+                                    order by ggd.time_on_ice desc)
+            and     gst.date = twowk.date
+            and     t.id = sgd.opponent_team_id"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    # Converts the time string to minutes(float) 
+    df['res_time_on_ice'] = df['res_time_on_ice'].apply(utils.convertTimeStringToMinutes)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+
+    X = df.drop(columns = ['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus'])
+    Y = df[['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+
+    linreg.fit(X_train,Y_train)
+    predict = linreg.predict(X_test)
+
+    print(predict)
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    r_sq_score = round(r2_score(Y_test,predict), 3)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'Linreg_SeasonTwoWkOppGoalieOppTeam_' + str(r_sq_score) + '_'+ datum + '.sav'
+    pickle.dump(linreg, open(filename, 'wb'))
+
+def trainSkaterSeasonTwoWkOppGoalieSigOppTeamTotalsModel():
+    linreg = LinearRegression()
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT twowk.games_played as twowk_games_played, twowk.time_on_ice as twowk_time_on_ice, twowk.goals as twowk_goals,
+                    twowk.assists as twowk_assists, twowk.first_assists as twowk_first_assists, twowk.second_assists as twowk_second_assists,
+                    twowk.points as twowk_points, twowk.ipp as twowk_ipp, twowk.shots as twowk_shots, twowk.shooting_pct as twowk_shooting_pct,
+                    twowk.ixg as twowk_ixg, twowk.icf as twowk_icf, twowk.iff as twowk_iff,
+                    twowk.iscf as twowk_iscf, twowk.ihdcf as twowk_ihdcf, twowk.rush_attempts as twowk_rush_attempts, twowk.rebounds_created as twowk_rebounds_created, 
+                    twowk.penalty_minutes as twowk_penalty_minutes, twowk.penalties_drawn as twowk_penalties_drawn, 
+                    twowk.giveaways as twowk_giveaways, twowk.takeaways as twowk_takeaways, twowk.hits as twowk_hits,  
+                    twowk.hits_taken as twowk_hits_taken, twowk.shots_blocked as twowk_shots_blocked, twowk.faceoffs_won as twowk_faceoffs_won,
+                    twowk.faceoffs_lost as twowk_faceoffs_lost, twowk.faceoff_pct as twowk_faceoff_pct,
+                    sst.games_played as sst_games_played, sst.time_on_ice as sst_time_on_ice, sst.goals as sst_goals,
+                    sst.assists as sst_assists, sst.first_assists as sst_first_assists, sst.second_assists as sst_second_assists,
+                    sst.points as sst_points, sst.ipp as sst_ipp, sst.shots as sst_shots, sst.shooting_pct as sst_shooting_pct,
+                    sst.ixg as sst_ixg, sst.icf as sst_icf, sst.iff as sst_iff,
+                    sst.iscf as sst_iscf, sst.ihdcf as sst_ihdcf, sst.rush_attempts as sst_rush_attempts, sst.rebounds_created as sst_rebounds_created, 
+                    sst.penalty_minutes as sst_penalty_minutes, sst.penalties_drawn as sst_penalties_drawn, 
+                    sst.giveaways as sst_giveaways, sst.takeaways as sst_takeaways, sst.hits as sst_hits,  
+                    sst.hits_taken as sst_hits_taken, sst.shots_blocked as sst_shots_blocked, sst.faceoffs_won as sst_faceoffs_won,
+                    sst.faceoffs_lost as sst_faceoffs_lost, sst.faceoff_pct as sst_faceoff_pct,
+                    sgd.time_on_ice as res_time_on_ice, sgd.goals as res_goals, sgd.assists as res_assists,
+                    sgd.shots as res_shots, sgd.hits as res_hits, sgd.power_play_goals as res_power_play_goals,
+                    sgd.power_play_assists as res_power_play_assists, sgd.penalty_minutes as res_penalty_minutes,
+                    sgd.face_off_pct as res_face_off_pct, sgd.face_off_wins as res_face_off_wins,
+                    sgd.takeaways as res_takeaways, sgd.giveaways as res_giveaways, 
+                    sgd.short_handed_goals as res_short_handed_goals, sgd.short_handed_assists as res_short_handed_assists,
+                    sgd.blocked_shots as res_blocked_shots, sgd.plus_minus as res_plus_minus,
+                    gst.gp as gst_gp,gst.toi as gst_toi, gst.shots_against as gst_shots_against, gst.saves as gst_saves,
+                    gst.goals_against as gst_goals_against, gst.sv_pct as gst_sv_pct, gst.gaa as gst_gaa, gst.gsaa as gst_gsaa,
+                    gst.xg_against as gst_xg_against, gst.hd_shots_against as gst_hd_shots_against,gst.hd_saves as gst_hd_saves,
+                    gst.hd_goals_against as gst_hd_goals_against, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa,
+                    gst.hdgsaa as gst_hdgsaa, gst.md_shots_against as gst_md_shots_against, gst.md_saves as gst_md_saves,
+                    gst.md_goals_against as gst_md_goals_against, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, 
+                    gst.mdgsaa as gst_mdgsaa,gst.ld_shots_against as gst_ld_shots_against, gst.ld_saves as gst_ld_saves,
+                    gst.ld_goals_against as gst_ld_goals_against, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                    gst.rush_attempts_against as gst_rush_attempts_against, gst.rebound_attempts_against as gst_rebound_attempts_against,
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_point_pct
+                            ELSE g.h_point_pct
+                            END AS opp_team_point_pct, 
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_cf_pct
+                            ELSE g.h_cf_pct
+                            END AS opp_cf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ff_pct
+                            ELSE g.h_ff_pct
+                            END AS opp_ff_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sf_pct
+                            ELSE g.h_sf_pct
+                            END AS opp_sf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_gf_pct
+                            ELSE g.h_gf_pct
+                            END AS opp_gf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_xgf_pct
+                            ELSE g.h_xgf_pct
+                            END AS opp_xgf_pct,
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sv_pct
+                            ELSE g.h_sv_pct
+                            END AS opp_sv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_PDO
+                            ELSE g.h_PDO
+                            END AS opp_PDO
+            FROM   games g, skater_game_data sgd, skater_two_wk_totals twowk, skater_season_totals sst, goalie_season_totals gst, teams t
+            WHERE  g.id = sgd.game_id
+            and    g.date >= (?)
+            and    g.date <= (?)
+            and    sgd.player_name = sst.player_name
+            and    twowk.player_name = sst.player_name
+            and    sst.date = DATE(g.date, '-1 day')
+            and    twowk.date = sst.date
+            and    gst.player_name = (SELECT  ggd.player_name 
+                                    FROM   goalie_game_data ggd, skater_game_data sgd, players p, games g
+                                    WHERE  sgd.player_name = sst.player_name
+                                    and    sgd.opponent_team_id = p.team_id
+                                    and    g.id = sgd.game_id
+                                    and    ggd.date = sgd.date
+                                    and    ggd.player_name = p.name
+                                    order by ggd.time_on_ice desc)
+            and     gst.date = twowk.date
+            and     t.id = sgd.opponent_team_id"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    # Converts the time string to minutes(float) 
+    df['res_time_on_ice'] = df['res_time_on_ice'].apply(utils.convertTimeStringToMinutes)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+
+    X = df.drop(columns = ['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus'])
+    Y = df[['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+
+    linreg.fit(X_train,Y_train)
+    predict = linreg.predict(X_test)
+
+    print(predict)
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    r_sq_score = round(r2_score(Y_test,predict), 3)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'Linreg_SeasonTwoWkOppGoalieSigOppTeam_' + str(r_sq_score) + '_'+ datum + '.sav'
+    pickle.dump(linreg, open(filename, 'wb'))
 #trainSkaterSeasonAndTwoWkTotalsModel()
 #testModelPrediction()
 #trainSkaterSeasonTotalsModel()
 #trainSkaterSeasonPPTwoWkTotalsModel()
-trainSkaterSeasonPPTwoWkOppGoalieTotalsModel()
+#trainSkaterSeasonPPTwoWkOppGoalieTotalsModel()
+#trainSkaterSeasonTwoWkOppGoalieOppTeamTotalsModel()
+#trainSkaterSeasonTwoWkOppGoalieSigOppTeamTotalsModel()
