@@ -1142,6 +1142,283 @@ def dtTrainSkaterSeasonTwoWkOppGoalieOppTeamTotalsModel():
     filename = 'DT_' + str(md) + 'MD_FMSE_SeasonTwoWkOppGoalieOppTeam_' + str(r_sq_score) + '_'+ datum + '.sav'
     print(filename)
     pickle.dump(dt, open(filename, 'wb'))
+
+def trainGoalieSeasonAndTwoWkTotalsModel():
+    linreg = LinearRegression()
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT  twowk.gp as twowk_games_played, twowk.toi as twowk_time_on_ice, (twowk.shots_against / twowk.toi * 60) as twowk_sa_p60,
+                        (twowk.saves / twowk.toi * 60) as twowk_saves_p60, twowk.gaa as twowk_gaa, twowk.sv_pct as twowk_sv_pct,
+                        twowk.gsaa as twowk_gsaa, (twowk.xg_against / twowk.toi * 60) as twowk_xga_p60, (twowk.hd_shots_against / twowk.toi * 60) as twowk_hdsa_p60,
+                        (twowk.hd_saves / twowk.toi * 60) as twowk_hds_p60, twowk.hdsv_pct as twowk_hdsv_pct, twowk.hdgaa as twowk_hdgaa, twowk.hdgsaa as twowk_hdgsaa,
+                        (twowk.md_shots_against / twowk.toi * 60) as twowk_mdsa_p60,
+                        (twowk.md_saves / twowk.toi * 60) as twowk_mds_p60, twowk.mdsv_pct as twowk_mdsv_pct, twowk.mdgaa as twowk_mdgaa, twowk.mdgsaa as twowk_mdgsaa,
+                        (twowk.ld_shots_against / twowk.toi * 60) as twowk_ldsa_p60,
+                        (twowk.ld_saves / twowk.toi * 60) as twowk_lds_p60, twowk.ldsv_pct as twowk_ldsv_pct, twowk.ldgaa as twowk_ldgaa, twowk.ldgsaa as twowk_ldgsaa,
+                        gst.gp as gst_games_played, gst.toi as gst_time_on_ice, (gst.shots_against / gst.toi * 60) as gst_sa_p60,
+                        (gst.saves / gst.toi * 60) as gst_saves_p60, gst.gaa as gst_gaa, gst.sv_pct as gst_sv_pct,
+                        gst.gsaa as gst_gsaa, (gst.xg_against / gst.toi * 60) as gst_xga_p60, (gst.hd_shots_against / gst.toi * 60) as gst_hdsa_p60,
+                        (gst.hd_saves / gst.toi * 60) as gst_hds_p60, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa, gst.hdgsaa as gst_hdgsaa,
+                        (gst.md_shots_against / gst.toi * 60) as gst_mdsa_p60,
+                        (gst.md_saves / gst.toi * 60) as gst_mds_p60, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, gst.mdgsaa as gst_mdgsaa,
+                        (gst.ld_shots_against / gst.toi * 60) as gst_ldsa_p60,
+                        (gst.ld_saves / gst.toi * 60) as gst_lds_p60, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                        ggd.shots_faced as res_shots_faced, ggd.saves as res_saves, ggd.save_pct as res_save_pct,
+                        (ggd.shots_faced - ggd.saves) as res_goals_allowed
+             FROM   games g, goalie_game_data ggd, goalie_two_wk_totals twowk, goalie_season_totals gst
+             WHERE  g.id = ggd.game_id
+             and    g.date >= (?)
+             and    g.date <= (?)
+             and    ggd.player_name = gst.player_name
+             and    twowk.player_name = gst.player_name
+             and    gst.date = DATE(g.date, '-1 day')
+             and    twowk.date = gst.date"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+    X = df.drop(columns = ['res_shots_faced', 'res_saves', 'res_save_pct', 'res_goals_allowed'])
+    Y = df[['res_shots_faced', 'res_saves', 'res_save_pct', 'res_goals_allowed']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+    linreg.fit(X_train,Y_train)
+    predict = linreg.predict(X_test)
+
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    r_sq_score = round(r2_score(Y_test,predict), 3)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'Linear_Regression_GoalieSeasonTwoWkTotals' + str(r_sq_score) + '_'+ datum + '.sav'
+    pickle.dump(linreg, open(filename, 'wb'))
+
+def trainGoalieSeasonTotalsModel():
+    linreg = LinearRegression()
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT   gst.gp as gst_games_played, gst.toi as gst_time_on_ice, (gst.shots_against / gst.toi * 60) as gst_sa_p60,
+                        (gst.saves / gst.toi * 60) as gst_saves_p60, gst.gaa as gst_gaa, gst.sv_pct as gst_sv_pct,
+                        gst.gsaa as gst_gsaa, (gst.xg_against / gst.toi * 60) as gst_xga_p60, (gst.hd_shots_against / gst.toi * 60) as gst_hdsa_p60,
+                        (gst.hd_saves / gst.toi * 60) as gst_hds_p60, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa, gst.hdgsaa as gst_hdgsaa,
+                        (gst.md_shots_against / gst.toi * 60) as gst_mdsa_p60,
+                        (gst.md_saves / gst.toi * 60) as gst_mds_p60, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, gst.mdgsaa as gst_mdgsaa,
+                        (gst.ld_shots_against / gst.toi * 60) as gst_ldsa_p60,
+                        (gst.ld_saves / gst.toi * 60) as gst_lds_p60, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                        ggd.shots_faced as res_shots_faced, ggd.saves as res_saves, ggd.save_pct as res_save_pct,
+                        (ggd.shots_faced - ggd.saves) as res_goals_allowed
+             FROM   games g, goalie_game_data ggd, goalie_season_totals gst
+             WHERE  g.id = ggd.game_id
+             and    g.date >= (?)
+             and    g.date <= (?)
+             and    ggd.player_name = gst.player_name
+             and    gst.date = DATE(g.date, '-1 day')"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+    X = df.drop(columns = ['res_shots_faced', 'res_saves', 'res_save_pct', 'res_goals_allowed'])
+    Y = df[['res_shots_faced', 'res_saves', 'res_save_pct', 'res_goals_allowed']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+    linreg.fit(X_train,Y_train)
+    predict = linreg.predict(X_test)
+
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    r_sq_score = round(r2_score(Y_test,predict), 3)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'Linear_Regression_GoalieSeasonTotals' + str(r_sq_score) + '_'+ datum + '.sav'
+    pickle.dump(linreg, open(filename, 'wb'))
+
+
+def trainGoalieSeasonTwoWkOppTeamTotalsModel():
+    linreg = LinearRegression()
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT  twowk.gp as twowk_games_played, twowk.toi as twowk_time_on_ice, (twowk.shots_against / twowk.toi * 60) as twowk_sa_p60,
+                        (twowk.saves / twowk.toi * 60) as twowk_saves_p60, twowk.gaa as twowk_gaa, twowk.sv_pct as twowk_sv_pct,
+                        twowk.gsaa as twowk_gsaa, (twowk.xg_against / twowk.toi * 60) as twowk_xga_p60, (twowk.hd_shots_against / twowk.toi * 60) as twowk_hdsa_p60,
+                        (twowk.hd_saves / twowk.toi * 60) as twowk_hds_p60, twowk.hdsv_pct as twowk_hdsv_pct, twowk.hdgaa as twowk_hdgaa, twowk.hdgsaa as twowk_hdgsaa,
+                        (twowk.md_shots_against / twowk.toi * 60) as twowk_mdsa_p60,
+                        (twowk.md_saves / twowk.toi * 60) as twowk_mds_p60, twowk.mdsv_pct as twowk_mdsv_pct, twowk.mdgaa as twowk_mdgaa, twowk.mdgsaa as twowk_mdgsaa,
+                        (twowk.ld_shots_against / twowk.toi * 60) as twowk_ldsa_p60,
+                        (twowk.ld_saves / twowk.toi * 60) as twowk_lds_p60, twowk.ldsv_pct as twowk_ldsv_pct, twowk.ldgaa as twowk_ldgaa, twowk.ldgsaa as twowk_ldgsaa,
+                        gst.gp as gst_games_played, gst.toi as gst_time_on_ice, (gst.shots_against / gst.toi * 60) as gst_sa_p60,
+                        (gst.saves / gst.toi * 60) as gst_saves_p60, gst.gaa as gst_gaa, gst.sv_pct as gst_sv_pct,
+                        gst.gsaa as gst_gsaa, (gst.xg_against / gst.toi * 60) as gst_xga_p60, (gst.hd_shots_against / gst.toi * 60) as gst_hdsa_p60,
+                        (gst.hd_saves / gst.toi * 60) as gst_hds_p60, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa, gst.hdgsaa as gst_hdgsaa,
+                        (gst.md_shots_against / gst.toi * 60) as gst_mdsa_p60,
+                        (gst.md_saves / gst.toi * 60) as gst_mds_p60, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, gst.mdgsaa as gst_mdgsaa,
+                        (gst.ld_shots_against / gst.toi * 60) as gst_ldsa_p60,
+                        (gst.ld_saves / gst.toi * 60) as gst_lds_p60, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                        ggd.shots_faced as res_shots_faced, ggd.saves as res_saves, ggd.save_pct as res_save_pct,
+                        (ggd.shots_faced - ggd.saves) as res_goals_allowed,
+                        
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_point_pct
+                            ELSE g.h_point_pct
+                            END AS opp_team_point_pct, 
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_cf_pct
+                            ELSE g.h_cf_pct
+                            END AS opp_cf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ff_pct
+                            ELSE g.h_ff_pct
+                            END AS opp_ff_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sf_pct
+                            ELSE g.h_sf_pct
+                            END AS opp_sf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_gf_pct
+                            ELSE g.h_gf_pct
+                            END AS opp_gf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_xgf_pct
+                            ELSE g.h_xgf_pct
+                            END AS opp_xgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scf_pct
+                            ELSE g.h_scf_pct
+                            END AS opp_scf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scsf_pct
+                            ELSE g.h_scsf_pct
+                            END AS opp_scsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scgf_pct
+                            ELSE g.h_scgf_pct
+                            END AS opp_scgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scsh_pct
+                            ELSE g.h_scsh_pct
+                            END AS opp_scsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_scsv_pct
+                            ELSE g.h_scsv_pct
+                            END AS opp_scsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdsf_pct
+                            ELSE g.h_hdsf_pct
+                            END AS opp_hdsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdgf_pct
+                            ELSE g.h_hdgf_pct
+                            END AS opp_hdgf_pct,   
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdsh_pct
+                            ELSE g.h_hdsh_pct
+                            END AS opp_hdsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_hdsv_pct
+                            ELSE g.h_hdsv_pct
+                            END AS opp_hdsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdsf_pct
+                            ELSE g.h_mdsf_pct
+                            END AS opp_mdsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdgf_pct
+                            ELSE g.h_mdgf_pct
+                            END AS opp_mdgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdsh_pct
+                            ELSE g.h_mdsh_pct
+                            END AS opp_mdsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_mdsv_pct
+                            ELSE g.h_mdsv_pct
+                            END AS opp_mdsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldsf_pct
+                            ELSE g.h_ldsf_pct
+                            END AS opp_ldsf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldgf_pct
+                            ELSE g.h_ldgf_pct
+                            END AS opp_ldgf_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldsh_pct
+                            ELSE g.h_ldsh_pct
+                            END AS opp_ldsh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_ldsv_pct
+                            ELSE g.h_ldsv_pct
+                            END AS opp_ldsv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sh_pct
+                            ELSE g.h_sh_pct
+                            END AS opp_sh_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_sv_pct
+                            ELSE g.h_sv_pct
+                            END AS opp_sv_pct,    
+                    CASE WHEN (t.name = g.away_team)
+                            THEN g.a_PDO
+                            ELSE g.h_PDO
+                            END AS opp_PDO
+             FROM   games g, goalie_game_data ggd, goalie_two_wk_totals twowk, goalie_season_totals gst, teams t
+             WHERE  g.id = ggd.game_id
+             and    g.date >= (?)
+             and    g.date <= (?)
+             and    ggd.player_name = gst.player_name
+             and    twowk.player_name = gst.player_name
+             and    gst.date = DATE(g.date, '-1 day')
+             and    twowk.date = gst.date
+             and    t.id = ggd.opponent_team_id"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+    X = df.drop(columns = ['res_shots_faced', 'res_saves', 'res_save_pct', 'res_goals_allowed'])
+    Y = df[['res_shots_faced', 'res_saves', 'res_save_pct', 'res_goals_allowed']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+    linreg.fit(X_train,Y_train)
+    predict = linreg.predict(X_test)
+
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    r_sq_score = round(r2_score(Y_test,predict), 3)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'Linear_Regression_GoalieSeasonTwoWkOppTeamTotals' + str(r_sq_score) + '_'+ datum + '.sav'
+    pickle.dump(linreg, open(filename, 'wb'))
 #Linear regressions    
 #trainSkaterSeasonAndTwoWkTotalsModel()
 #testModelPrediction()
@@ -1150,6 +1427,11 @@ def dtTrainSkaterSeasonTwoWkOppGoalieOppTeamTotalsModel():
 #trainSkaterSeasonPPTwoWkOppGoalieTotalsModel()
 #trainSkaterSeasonTwoWkOppGoalieOppTeamTotalsModel()
 #trainSkaterSeasonTwoWkOppGoalieSigOppTeamTotalsModel()
+
+#Linear regression goalies
+#trainGoalieSeasonAndTwoWkTotalsModel()
+#trainGoalieSeasonTotalsModel()
+#trainGoalieSeasonTwoWkOppTeamTotalsModel()
 
 #Decision trees
 # dtTrainSkaterSeasonAndTwoWkTotalsModel()
