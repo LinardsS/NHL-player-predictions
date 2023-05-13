@@ -7,6 +7,7 @@ from sklearn.tree import DecisionTreeRegressor, plot_tree
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
 import statsmodels.api as sm
 import pickle
 import utils
@@ -843,21 +844,28 @@ def plotDecisionTreeRegressor(model_name):
                      'sst_rush_attempts', 'sst_rebounds_created', 'sst_penalty_minutes', 'sst_penalties_drawn', 'sst_giveaways', 'sst_takeaways',
                      'sst_hits', 'sst_hits_taken', 'sst_shots_blocked', 'sst_faceoffs_won', 'sst_faceoffs_lost', 'sst_faceoff_pct']
     feature_importance = pd.DataFrame(dt.feature_importances_, index = feature_names)
-
+    feat_importances = pd.Series(dt.feature_importances_, index=feature_names)
+    feat_importances.nlargest(6).plot(kind='barh', fontsize=12, figsize=(5,5)).invert_yaxis()
     # plot the feature importance
     #feature_plot = feature_importance.plot(kind='bar')
 
     #plot the tree itself
-    fig, ax = plt.subplots()
-    fig.tight_layout()
-    tree_plot = plot_tree(dt,
-                  feature_names = feature_names,
-                  filled = True,
-                  fontsize = 5)
+#     fig, ax = plt.subplots(figsize=(8, 6))
+#     fig.tight_layout()
+#     tree_plot = plot_tree(dt,
+#                   feature_names = feature_names,
+#                   filled = True,
+#                   fontsize = 5)
+#     plt.subplots_adjust(bottom=0.1, right=0.8, top=0.9)
+    # create the plot
+#     fig, ax = plt.subplots(figsize=(8, 6))
+#     ax.plot(dt.feature_importances_)
+#     plt.subplots_adjust(bottom=0.1, top=0.9, left=0.1, right=0.9)
+    plt.tight_layout()
     plt.show()
-    today = datetime.now()
-    filename = today.strftime("%d%m%Y%H%M%S")
-    plt.savefig(filename,bbox_inches='tight',dpi=100)
+#     today = datetime.now()
+#     filename = today.strftime("%d%m%Y%H%M%S")
+#     plt.savefig(filename,bbox_inches='tight')
 
 def plotSimplifiedDecisionTreeRegressor(model_name):
     dt = loadModel(model_name)
@@ -2027,8 +2035,8 @@ def plotSimplifiedGoalieDecisionTree(model_name):
     filename = today.strftime("%d%m%Y%H%M%S")
     plt.savefig(filename,bbox_inches='tight',dpi=100)
 
-def knnTrainSkaterSeasonAndTwoWkModel():
-    knn = KNeighborsRegressor()
+def knnTrainSkaterSeasonAndTwoWkModel(n_neighbors):
+    knn = KNeighborsRegressor(n_neighbors=n_neighbors)
     conn = utils.establishDatabaseConnection("main.db")
 
     query = """SELECT  twowk.games_played as twowk_games_played, twowk.time_on_ice as twowk_time_on_ice, twowk.goals as twowk_goals,
@@ -2097,8 +2105,236 @@ def knnTrainSkaterSeasonAndTwoWkModel():
     
     #Save model
     datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
-    filename = 'KNN_SeasonTwoWk' + str(score) + '_'+ datum + '.sav'
+    filename = 'KNN_' + str(n_neighbors) + '_SeasonTwoWk' + str(score) + '_'+ datum + '.sav'
+    print(filename)
     pickle.dump(knn, open(filename, 'wb'))
+
+def knnTrainSkaterSeasonPPTwoWkOppGoalieTotalsModel():
+    knn = KNeighborsRegressor()
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT   twowk.games_played as twowk_games_played, twowk.time_on_ice as twowk_time_on_ice, twowk.goals as twowk_goals,
+                        twowk.assists as twowk_assists, twowk.first_assists as twowk_first_assists, twowk.second_assists as twowk_second_assists,
+                        twowk.points as twowk_points, twowk.ipp as twowk_ipp, twowk.shots as twowk_shots, twowk.shooting_pct as twowk_shooting_pct,
+                        twowk.ixg as twowk_ixg, twowk.icf as twowk_icf, twowk.iff as twowk_iff,
+                        twowk.iscf as twowk_iscf, twowk.ihdcf as twowk_ihdcf, twowk.rush_attempts as twowk_rush_attempts, twowk.rebounds_created as twowk_rebounds_created, 
+                        twowk.penalty_minutes as twowk_penalty_minutes, twowk.penalties_drawn as twowk_penalties_drawn, 
+                        twowk.giveaways as twowk_giveaways, twowk.takeaways as twowk_takeaways, twowk.hits as twowk_hits,  
+                        twowk.hits_taken as twowk_hits_taken, twowk.shots_blocked as twowk_shots_blocked, twowk.faceoffs_won as twowk_faceoffs_won,
+                        twowk.faceoffs_lost as twowk_faceoffs_lost, twowk.faceoff_pct as twowk_faceoff_pct,
+                        sst.games_played as sst_games_played, sst.time_on_ice as sst_time_on_ice, sst.goals as sst_goals,
+                        sst.assists as sst_assists, sst.first_assists as sst_first_assists, sst.second_assists as sst_second_assists,
+                        sst.points as sst_points, sst.ipp as sst_ipp, sst.shots as sst_shots, sst.shooting_pct as sst_shooting_pct,
+                        sst.ixg as sst_ixg, sst.icf as sst_icf, sst.iff as sst_iff,
+                        sst.iscf as sst_iscf, sst.ihdcf as sst_ihdcf, sst.rush_attempts as sst_rush_attempts, sst.rebounds_created as sst_rebounds_created, 
+                        sst.penalty_minutes as sst_penalty_minutes, sst.penalties_drawn as sst_penalties_drawn, 
+                        sst.giveaways as sst_giveaways, sst.takeaways as sst_takeaways, sst.hits as sst_hits,  
+                        sst.hits_taken as sst_hits_taken, sst.shots_blocked as sst_shots_blocked, sst.faceoffs_won as sst_faceoffs_won,
+                        sst.faceoffs_lost as sst_faceoffs_lost, sst.faceoff_pct as sst_faceoff_pct,
+                        sgd.time_on_ice as res_time_on_ice, sgd.goals as res_goals, sgd.assists as res_assists,
+                        sgd.shots as res_shots, sgd.hits as res_hits, sgd.power_play_goals as res_power_play_goals,
+                        sgd.power_play_assists as res_power_play_assists, sgd.penalty_minutes as res_penalty_minutes,
+                        sgd.face_off_pct as res_face_off_pct, sgd.face_off_wins as res_face_off_wins,
+                        sgd.takeaways as res_takeaways, sgd.giveaways as res_giveaways, 
+                        sgd.short_handed_goals as res_short_handed_goals, sgd.short_handed_assists as res_short_handed_assists,
+                        sgd.blocked_shots as res_blocked_shots, sgd.plus_minus as res_plus_minus,
+                        gst.gp as gst_gp,gst.toi as gst_toi, gst.shots_against as gst_shots_against, gst.saves as gst_saves,
+                        gst.goals_against as gst_goals_against, gst.sv_pct as gst_sv_pct, gst.gaa as gst_gaa, gst.gsaa as gst_gsaa,
+                        gst.xg_against as gst_xg_against, gst.hd_shots_against as gst_hd_shots_against,gst.hd_saves as gst_hd_saves,
+                        gst.hd_goals_against as gst_hd_goals_against, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa,
+                        gst.hdgsaa as gst_hdgsaa, gst.md_shots_against as gst_md_shots_against, gst.md_saves as gst_md_saves,
+                        gst.md_goals_against as gst_md_goals_against, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, 
+                        gst.mdgsaa as gst_mdgsaa,gst.ld_shots_against as gst_ld_shots_against, gst.ld_saves as gst_ld_saves,
+                        gst.ld_goals_against as gst_ld_goals_against, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                        gst.rush_attempts_against as gst_rush_attempts_against, gst.rebound_attempts_against as gst_rebound_attempts_against
+             FROM   games g, skater_game_data sgd, skater_two_wk_totals twowk, skater_season_totals sst, goalie_season_totals gst
+             WHERE  g.id = sgd.game_id
+             and    g.date >= (?)
+             and    g.date <= (?)
+             and    sgd.player_name = sst.player_name
+             and    twowk.player_name = sst.player_name
+             and    sst.date = DATE(g.date, '-1 day')
+             and    twowk.date = sst.date
+             and    gst.player_name = (SELECT  ggd.player_name 
+                                        FROM   goalie_game_data ggd, skater_game_data sgd, players p, games g
+                                        WHERE  sgd.player_name = sst.player_name
+                                        and    sgd.opponent_team_id = p.team_id
+                                        and    g.id = sgd.game_id
+                                        and    ggd.date = sgd.date
+                                        and    ggd.player_name = p.name
+                                        order by ggd.time_on_ice desc)
+            and     gst.date = twowk.date"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    # Converts the time string to minutes(float) 
+    df['res_time_on_ice'] = df['res_time_on_ice'].apply(utils.convertTimeStringToMinutes)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+
+    X = df.drop(columns = ['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus'])
+    Y = df[['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+    #print(train[['twowk_games_played'] + ['twowk_time_on_ice'] + ['twowk_goals'] + ['twowk_assists'] + ['twowk_first_assists'] + ['twowk_second_assists'] + ['twowk_points'] + ['twowk_ipp'] + ['twowk_shots'] + ['twowk_shooting_pct'] + ['twowk_ixg'] + ['twowk_icf'] + ['twowk_iff'] + ['twowk_iscf'] + ['twowk_ihdcf'] + ['twowk_rush_attempts'] + ['twowk_rebounds_created'] + ['twowk_penalty_minutes'] + ['twowk_penalties_drawn'] + ['twowk_giveaways'] + ['twowk_takeaways'] + ['twowk_hits'] + ['twowk_hits_taken'] + ['twowk_shots_blocked'] + ['twowk_faceoffs_won'] + ['twowk_faceoffs_lost'] + ['twowk_faceoff_pct'] + ['sst_games_played'] + ['sst_time_on_ice'] + ['sst_goals'] + ['sst_assists'] + ['sst_first_assists'] + ['sst_second_assists'] + ['sst_points'] + ['sst_ipp'] + ['sst_shots'] + ['sst_shooting_pct'] + ['sst_ixg'] + ['sst_icf'] + ['sst_iff'] + ['sst_iscf'] + ['sst_ihdcf'] + ['sst_rush_attempts'] + ['sst_rebounds_created'] + ['sst_penalty_minutes'] + ['sst_penalties_drawn'] + ['sst_giveaways'] + ['sst_takeaways'] + ['sst_hits'] + ['sst_hits_taken'] + ['sst_shots_blocked'] + ['sst_faceoffs_won'] + ['sst_faceoffs_lost'] + ['sst_faceoff_pct']])
+    
+    knn.fit(X_train,Y_train)
+    predict = knn.predict(X_test)
+
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    score = round(knn.score(X_test, Y_test), 3)
+    print(score)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'KNN_SeasonPPTwoWkOppGoalie_' + str(score) + '_'+ datum + '.sav'
+    print(filename)
+    pickle.dump(knn, open(filename, 'wb'))
+
+def rfTrainSkaterSeasonAndTwoWkModel(estimators, pruning, md):
+    rf = RandomForestRegressor(n_estimators=estimators, ccp_alpha=pruning, max_depth=md)
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT  twowk.games_played as twowk_games_played, twowk.time_on_ice as twowk_time_on_ice, twowk.goals as twowk_goals,
+                            twowk.assists as twowk_assists, twowk.first_assists as twowk_first_assists, twowk.second_assists as twowk_second_assists,
+                            twowk.points as twowk_points, twowk.ipp as twowk_ipp, twowk.shots as twowk_shots, twowk.shooting_pct as twowk_shooting_pct,
+                            twowk.ixg as twowk_ixg, twowk.icf as twowk_icf, twowk.iff as twowk_iff,
+                            twowk.iscf as twowk_iscf, twowk.ihdcf as twowk_ihdcf, twowk.rush_attempts as twowk_rush_attempts, twowk.rebounds_created as twowk_rebounds_created, 
+                            twowk.penalty_minutes as twowk_penalty_minutes, twowk.penalties_drawn as twowk_penalties_drawn, 
+                            twowk.giveaways as twowk_giveaways, twowk.takeaways as twowk_takeaways, twowk.hits as twowk_hits,  
+                            twowk.hits_taken as twowk_hits_taken, twowk.shots_blocked as twowk_shots_blocked, twowk.faceoffs_won as twowk_faceoffs_won,
+                            twowk.faceoffs_lost as twowk_faceoffs_lost, twowk.faceoff_pct as twowk_faceoff_pct,
+                            sst.games_played as sst_games_played, sst.time_on_ice as sst_time_on_ice, sst.goals as sst_goals,
+                            sst.assists as sst_assists, sst.first_assists as sst_first_assists, sst.second_assists as sst_second_assists,
+                            sst.points as sst_points, sst.ipp as sst_ipp, sst.shots as sst_shots, sst.shooting_pct as sst_shooting_pct,
+                            sst.ixg as sst_ixg, sst.icf as sst_icf, sst.iff as sst_iff,
+                            sst.iscf as sst_iscf, sst.ihdcf as sst_ihdcf, sst.rush_attempts as sst_rush_attempts, sst.rebounds_created as sst_rebounds_created, 
+                            sst.penalty_minutes as sst_penalty_minutes, sst.penalties_drawn as sst_penalties_drawn, 
+                            sst.giveaways as sst_giveaways, sst.takeaways as sst_takeaways, sst.hits as sst_hits,  
+                            sst.hits_taken as sst_hits_taken, sst.shots_blocked as sst_shots_blocked, sst.faceoffs_won as sst_faceoffs_won,
+                            sst.faceoffs_lost as sst_faceoffs_lost, sst.faceoff_pct as sst_faceoff_pct,
+                            sgd.time_on_ice as res_time_on_ice, sgd.goals as res_goals, sgd.assists as res_assists,
+                            sgd.shots as res_shots, sgd.hits as res_hits, sgd.power_play_goals as res_power_play_goals,
+                            sgd.power_play_assists as res_power_play_assists, sgd.penalty_minutes as res_penalty_minutes,
+                            sgd.face_off_pct as res_face_off_pct, sgd.face_off_wins as res_face_off_wins,
+                            sgd.takeaways as res_takeaways, sgd.giveaways as res_giveaways, 
+                            sgd.short_handed_goals as res_short_handed_goals, sgd.short_handed_assists as res_short_handed_assists,
+                            sgd.blocked_shots as res_blocked_shots, sgd.plus_minus as res_plus_minus
+             FROM   games g, skater_game_data sgd, skater_two_wk_totals twowk, skater_season_totals sst
+             WHERE  g.id = sgd.game_id
+             and    g.date >= (?)
+             and    g.date <= (?)
+             and    sgd.player_name = sst.player_name
+             and    twowk.player_name = sst.player_name
+             and    sst.date = DATE(g.date, '-1 day')
+             and    twowk.date = sst.date"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    # Converts the time string to minutes(float) 
+    df['res_time_on_ice'] = df['res_time_on_ice'].apply(utils.convertTimeStringToMinutes)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+
+    X = df.drop(columns = ['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus'])
+    Y = df[['res_time_on_ice', 'res_goals', 'res_assists', 'res_shots', 'res_hits', 'res_power_play_goals', 'res_power_play_assists', 'res_penalty_minutes', 'res_face_off_pct', 'res_face_off_wins', 'res_takeaways', 'res_giveaways', 'res_short_handed_goals', 'res_short_handed_assists', 'res_blocked_shots', 'res_plus_minus']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+    #print(train[['twowk_games_played'] + ['twowk_time_on_ice'] + ['twowk_goals'] + ['twowk_assists'] + ['twowk_first_assists'] + ['twowk_second_assists'] + ['twowk_points'] + ['twowk_ipp'] + ['twowk_shots'] + ['twowk_shooting_pct'] + ['twowk_ixg'] + ['twowk_icf'] + ['twowk_iff'] + ['twowk_iscf'] + ['twowk_ihdcf'] + ['twowk_rush_attempts'] + ['twowk_rebounds_created'] + ['twowk_penalty_minutes'] + ['twowk_penalties_drawn'] + ['twowk_giveaways'] + ['twowk_takeaways'] + ['twowk_hits'] + ['twowk_hits_taken'] + ['twowk_shots_blocked'] + ['twowk_faceoffs_won'] + ['twowk_faceoffs_lost'] + ['twowk_faceoff_pct'] + ['sst_games_played'] + ['sst_time_on_ice'] + ['sst_goals'] + ['sst_assists'] + ['sst_first_assists'] + ['sst_second_assists'] + ['sst_points'] + ['sst_ipp'] + ['sst_shots'] + ['sst_shooting_pct'] + ['sst_ixg'] + ['sst_icf'] + ['sst_iff'] + ['sst_iscf'] + ['sst_ihdcf'] + ['sst_rush_attempts'] + ['sst_rebounds_created'] + ['sst_penalty_minutes'] + ['sst_penalties_drawn'] + ['sst_giveaways'] + ['sst_takeaways'] + ['sst_hits'] + ['sst_hits_taken'] + ['sst_shots_blocked'] + ['sst_faceoffs_won'] + ['sst_faceoffs_lost'] + ['sst_faceoff_pct']])
+    
+    rf.fit(X_train,Y_train)
+    predict = rf.predict(X_test)
+
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    score = round(rf.score(X_test, Y_test), 3)
+    print(score)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'RF_SeasonTwoWk_' + str(score) + '_MD'+ str(md) + '_Estim'+ str(estimators) + '_' + str(pruning) + '_' + datum + '.sav'
+    print(filename)
+    pickle.dump(rf, open(filename, 'wb'))
+
+def knnTrainGoalieSeasonTwoWkModel(n_neighbors):
+    knn = KNeighborsRegressor(n_neighbors=n_neighbors)
+    conn = utils.establishDatabaseConnection("main.db")
+
+    query = """SELECT  twowk.gp as twowk_games_played, twowk.toi as twowk_time_on_ice, (twowk.shots_against / twowk.toi * 60) as twowk_sa_p60,
+                        (twowk.saves / twowk.toi * 60) as twowk_saves_p60, twowk.gaa as twowk_gaa, twowk.sv_pct as twowk_sv_pct,
+                        twowk.gsaa as twowk_gsaa, (twowk.xg_against / twowk.toi * 60) as twowk_xga_p60, (twowk.hd_shots_against / twowk.toi * 60) as twowk_hdsa_p60,
+                        (twowk.hd_saves / twowk.toi * 60) as twowk_hds_p60, twowk.hdsv_pct as twowk_hdsv_pct, twowk.hdgaa as twowk_hdgaa, twowk.hdgsaa as twowk_hdgsaa,
+                        (twowk.md_shots_against / twowk.toi * 60) as twowk_mdsa_p60,
+                        (twowk.md_saves / twowk.toi * 60) as twowk_mds_p60, twowk.mdsv_pct as twowk_mdsv_pct, twowk.mdgaa as twowk_mdgaa, twowk.mdgsaa as twowk_mdgsaa,
+                        (twowk.ld_shots_against / twowk.toi * 60) as twowk_ldsa_p60,
+                        (twowk.ld_saves / twowk.toi * 60) as twowk_lds_p60, twowk.ldsv_pct as twowk_ldsv_pct, twowk.ldgaa as twowk_ldgaa, twowk.ldgsaa as twowk_ldgsaa,
+                        gst.gp as gst_games_played, gst.toi as gst_time_on_ice, (gst.shots_against / gst.toi * 60) as gst_sa_p60,
+                        (gst.saves / gst.toi * 60) as gst_saves_p60, gst.gaa as gst_gaa, gst.sv_pct as gst_sv_pct,
+                        gst.gsaa as gst_gsaa, (gst.xg_against / gst.toi * 60) as gst_xga_p60, (gst.hd_shots_against / gst.toi * 60) as gst_hdsa_p60,
+                        (gst.hd_saves / gst.toi * 60) as gst_hds_p60, gst.hdsv_pct as gst_hdsv_pct, gst.hdgaa as gst_hdgaa, gst.hdgsaa as gst_hdgsaa,
+                        (gst.md_shots_against / gst.toi * 60) as gst_mdsa_p60,
+                        (gst.md_saves / gst.toi * 60) as gst_mds_p60, gst.mdsv_pct as gst_mdsv_pct, gst.mdgaa as gst_mdgaa, gst.mdgsaa as gst_mdgsaa,
+                        (gst.ld_shots_against / gst.toi * 60) as gst_ldsa_p60,
+                        (gst.ld_saves / gst.toi * 60) as gst_lds_p60, gst.ldsv_pct as gst_ldsv_pct, gst.ldgaa as gst_ldgaa, gst.ldgsaa as gst_ldgsaa,
+                        ggd.save_pct as res_save_pct, (ggd.shots_faced - ggd.saves) as res_goals_allowed
+             FROM   games g, goalie_game_data ggd, goalie_two_wk_totals twowk, goalie_season_totals gst
+             WHERE  g.id = ggd.game_id
+             and    g.date >= (?)
+             and    g.date <= (?)
+             and    ggd.player_name = gst.player_name
+             and    twowk.player_name = gst.player_name
+             and    gst.date = DATE(g.date, '-1 day')
+             and    twowk.date = gst.date"""
+    start_date = "2022-10-26"
+    end_date = "2023-04-07" 
+    query_params = (start_date, end_date)
+    df = pd.read_sql_query(query, conn, params = query_params)
+    print(df.shape[0])
+    # Clean data
+    df.replace(to_replace='-', value=0, inplace=True)
+    df.replace(to_replace=[None], value=0, inplace=True)
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.replace('inf', np.nan, inplace=True)
+    df.fillna(0,inplace=True)
+    X = df.drop(columns = ['res_save_pct', 'res_goals_allowed'])
+    Y = df[['res_save_pct', 'res_goals_allowed']]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=7) # 80%/20% training/test split
+    knn.fit(X_train,Y_train)
+    predict = knn.predict(X_test)
+
+    print("R2:")
+    print(r2_score(Y_test,predict))
+    print("MSE:")
+    print(mean_squared_error(Y_test, predict))
+    print("RMSE:")
+    print(math.sqrt(mean_squared_error(Y_test, predict)))
+    r_sq_score = round(r2_score(Y_test,predict), 3)
+    
+    #Save model
+    datum = utils.getTodaysDate(format = "%Y-%m-%d",backdate = None)
+    filename = 'KNN_' + str(n_neighbors) + '_GoalieSeasonTwoWk_' + str(r_sq_score) + '_'+ datum + '.sav'
+    print(filename)
+    pickle.dump(knn, open(filename, 'wb'))
+
 #Linear regressions    
 #trainSkaterSeasonAndTwoWkTotalsModel()
 #testModelPrediction()
@@ -2127,6 +2363,7 @@ def knnTrainSkaterSeasonAndTwoWkModel():
 # dtTrainSkaterSeasonAndTwoWkTotalsModelSuperSUPERSimplified()
 #plotSuperSUPERSimplifiedDecisionTreeRegressor("DT_3MD_FMSE_0001ccp_SeasonTwoWk_SuperSUPERSimplified0.151_2023-05-05")
 # trainLinearSkaterGoalModelSingleParam()
+#plotDecisionTreeRegressor("DT_8MD_FMSE_0001ccp_SeasonTwoWk_0.134_2023-05-04")
 
 # Goalie decision trees
 # dtTrainGoalieSeasonAndTwoWkTotalsModel()
@@ -2134,4 +2371,9 @@ def knnTrainSkaterSeasonAndTwoWkModel():
 # plotSimplifiedGoalieDecisionTree("DT_4MD_FMSE_GoalieSeasonTwoWkSimplified_0.069_2023-05-07")
 
 #Skater k-nearest neighbor regressor
-knnTrainSkaterSeasonAndTwoWkModel()
+#knnTrainSkaterSeasonAndTwoWkModel(100)
+#knnTrainSkaterSeasonPPTwoWkOppGoalieTotalsModel()
+#knnTrainGoalieSeasonTwoWkModel(100)
+
+#Skater random forest regressor
+#rfTrainSkaterSeasonAndTwoWkModel(estimators = 20, pruning = 0.001, md=8)
